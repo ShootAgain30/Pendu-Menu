@@ -1,4 +1,4 @@
-const CACHE = 'pendu-v2.0.0';
+const CACHE = 'pendu-v2.0.1';
 const FILES = [
   'index.html',
   'manifest.json',
