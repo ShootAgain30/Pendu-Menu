@@ -12,6 +12,7 @@ const FILES = [
   'Motmagique.mp3',
   'Motmagique.gif'
 ];
+
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE).then(function(cache) {
@@ -20,6 +21,7 @@ self.addEventListener('install', function(e) {
   );
   self.skipWaiting();
 });
+
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
@@ -31,6 +33,7 @@ self.addEventListener('activate', function(e) {
   );
   self.clients.claim();
 });
+
 self.addEventListener('fetch', function(e) {
   e.respondWith(
     caches.match(e.request, { ignoreSearch: true, ignoreVary: true })
@@ -40,4 +43,10 @@ self.addEventListener('fetch', function(e) {
         });
       })
   );
+});
+
+self.addEventListener('message', function(e) {
+  if (e.data === 'getVersion') {
+    e.source.postMessage(CACHE);
+  }
 });
