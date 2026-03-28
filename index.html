@@ -20,253 +20,96 @@
   --border: rgba(255,255,255,0.08);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; background:var(--bg); color:var(--text); font-family:'DM Serif Display',serif; overflow:hidden; touch-action:manipulation; }
+body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background: radial-gradient(ellipse 80% 60% at 10% 0%,rgba(232,255,71,0.06) 0%,transparent 60%),
+              radial-gradient(ellipse 60% 80% at 90% 100%,rgba(72,219,251,0.05) 0%,transparent 60%); }
 
-html, body {
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Serif Display', serif;
-  overflow: hidden;
-  touch-action: manipulation;
-}
-
-body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 10% 0%, rgba(232,255,71,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 90% 100%, rgba(72,219,251,0.05) 0%, transparent 60%);
-}
-
-/* ═══════════════════════════════════════
-   MENU
-═══════════════════════════════════════ */
-#menu-screen {
-  position: fixed; inset: 0; z-index: 200;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 32px 24px;
-  background: var(--bg);
-  transition: opacity 0.5s, transform 0.5s;
-}
-#menu-screen.hidden {
-  opacity: 0; pointer-events: none; transform: scale(0.96);
-}
-
-.menu-bg {
-  position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(ellipse 70% 50% at 50% 20%, rgba(232,255,71,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(72,219,251,0.06) 0%, transparent 60%);
-}
-
-.menu-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(3.5rem, 18vw, 5.5rem);
-  letter-spacing: 0.18em;
-  color: var(--accent);
-  text-shadow: 0 0 60px rgba(232,255,71,0.35), 0 0 120px rgba(232,255,71,0.15);
-  line-height: 1;
-  text-align: center;
-  animation: menuPulse 4s ease-in-out infinite;
-  position: relative; z-index: 1;
-}
-@keyframes menuPulse {
-  0%,100% { text-shadow: 0 0 60px rgba(232,255,71,0.35), 0 0 120px rgba(232,255,71,0.15); }
-  50%      { text-shadow: 0 0 80px rgba(232,255,71,0.6),  0 0 160px rgba(232,255,71,0.25); }
-}
-
-/* Pendu déco sur le menu */
-.menu-gallows {
-  margin: 12px 0; position: relative; z-index: 1;
-  animation: float 3s ease-in-out infinite;
-}
+/* ── MENU ── */
+#menu-screen { position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px; background:var(--bg); transition:opacity 0.5s,transform 0.5s; }
+#menu-screen.hidden { opacity:0; pointer-events:none; transform:scale(0.96); }
+.menu-bg { position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 70% 50% at 50% 20%,rgba(232,255,71,0.07) 0%,transparent 60%),
+              radial-gradient(ellipse 50% 60% at 80% 80%,rgba(72,219,251,0.06) 0%,transparent 60%); }
+.highscore-bar { position:relative; z-index:1; width:100%; text-align:right; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+.highscore-bar span { color:var(--accent); font-size:0.85rem; font-family:'Bebas Neue',sans-serif; letter-spacing:0.1em; }
+.menu-logo { font-family:'Bebas Neue',sans-serif; font-size:clamp(3.5rem,18vw,5.5rem); letter-spacing:0.18em; color:var(--accent); text-shadow:0 0 60px rgba(232,255,71,0.35),0 0 120px rgba(232,255,71,0.15); line-height:1; text-align:center; animation:menuPulse 4s ease-in-out infinite; position:relative; z-index:1; }
+@keyframes menuPulse { 0%,100%{text-shadow:0 0 60px rgba(232,255,71,0.35),0 0 120px rgba(232,255,71,0.15)} 50%{text-shadow:0 0 80px rgba(232,255,71,0.6),0 0 160px rgba(232,255,71,0.25)} }
+.menu-gallows { margin:12px 0; position:relative; z-index:1; animation:float 3s ease-in-out infinite; }
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-
-.menu-section-title {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 10px; margin-top: 20px;
-  position: relative; z-index: 1;
-}
-
-/* ── Difficulté ── */
-.diff-group {
-  display: flex; gap: 10px; position: relative; z-index: 1;
-}
-.diff-btn {
-  background: var(--card); border: 1px solid var(--border);
-  color: var(--muted); font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem; letter-spacing: 0.12em;
-  padding: 10px 18px; border-radius: 6px; cursor: pointer;
-  transition: all 0.2s; position: relative; overflow: hidden;
-  min-width: 80px; text-align: center;
-}
+.menu-section-title { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; margin-top:20px; position:relative; z-index:1; }
+.diff-group { display:flex; gap:10px; position:relative; z-index:1; }
+.diff-btn { background:var(--card); border:1px solid var(--border); color:var(--muted); font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:0.12em; padding:10px 18px; border-radius:6px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; min-width:80px; text-align:center; }
 .diff-btn::after { content:''; position:absolute; inset:0; opacity:0; transition:opacity 0.15s; }
 .diff-btn:active::after { opacity:0.15; }
 .diff-btn.active-easy   { background:rgba(72,219,251,0.12); border-color:var(--accent3); color:var(--accent3); box-shadow:0 0 20px rgba(72,219,251,0.2); }
 .diff-btn.active-normal { background:rgba(232,255,71,0.12); border-color:var(--accent);  color:var(--accent);  box-shadow:0 0 20px rgba(232,255,71,0.2); }
 .diff-btn.active-hard   { background:rgba(255,71,87,0.12);  border-color:var(--accent2); color:var(--accent2); box-shadow:0 0 20px rgba(255,71,87,0.2); }
+.toggle-row { display:flex; align-items:center; gap:14px; position:relative; z-index:1; background:var(--card); border:1px solid var(--border); padding:12px 20px; border-radius:8px; cursor:pointer; transition:all 0.2s; width:100%; max-width:300px; justify-content:space-between; }
+.toggle-row:active { transform:scale(0.98); }
+.toggle-label { font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text); }
+.toggle-switch { width:42px; height:24px; border-radius:12px; background:rgba(255,255,255,0.1); border:1px solid var(--border); position:relative; transition:all 0.3s; flex-shrink:0; }
+.toggle-switch::after { content:''; position:absolute; width:18px; height:18px; border-radius:50%; background:var(--muted); top:2px; left:2px; transition:all 0.3s; }
+.toggle-switch.on { background:rgba(232,255,71,0.2); border-color:var(--accent); }
+.toggle-switch.on::after { background:var(--accent); left:20px; box-shadow:0 0 8px rgba(232,255,71,0.5); }
+.play-btn { background:var(--accent); color:var(--bg); border:none; padding:16px 60px; font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:0.2em; cursor:pointer; border-radius:6px; transition:all 0.25s; box-shadow:0 0 40px rgba(232,255,71,0.35); position:relative; z-index:1; margin-top:28px; animation:playPulse 2.5s ease-in-out infinite; }
+@keyframes playPulse { 0%,100%{box-shadow:0 0 40px rgba(232,255,71,0.35)} 50%{box-shadow:0 0 70px rgba(232,255,71,0.6)} }
+.play-btn:active { transform:scale(0.96); }
+.menu-sound-btn { background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35); color:#e8ff47; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; padding:7px 20px; border-radius:100px; cursor:pointer; transition:all 0.2s; margin-top:10px; position:relative; z-index:1; }
+.menu-sound-btn:active { transform:scale(0.95); }
 
-/* ── Toggle indices ── */
-.toggle-row {
-  display: flex; align-items: center; gap: 14px;
-  position: relative; z-index: 1;
-  background: var(--card); border: 1px solid var(--border);
-  padding: 12px 20px; border-radius: 8px; cursor: pointer;
-  transition: all 0.2s; width: 100%; max-width: 300px; justify-content: space-between;
-}
-.toggle-row:active { transform: scale(0.98); }
-.toggle-label {
-  font-family: 'DM Mono', monospace; font-size: 0.75rem;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text);
-}
-.toggle-switch {
-  width: 42px; height: 24px; border-radius: 12px;
-  background: rgba(255,255,255,0.1); border: 1px solid var(--border);
-  position: relative; transition: all 0.3s; flex-shrink: 0;
-}
-.toggle-switch::after {
-  content: ''; position: absolute; width: 18px; height: 18px;
-  border-radius: 50%; background: var(--muted);
-  top: 2px; left: 2px; transition: all 0.3s;
-}
-.toggle-switch.on { background: rgba(232,255,71,0.2); border-color: var(--accent); }
-.toggle-switch.on::after { background: var(--accent); left: 20px; box-shadow: 0 0 8px rgba(232,255,71,0.5); }
-
-/* ── Bouton Jouer ── */
-.play-btn {
-  background: var(--accent); color: var(--bg); border: none;
-  padding: 16px 60px; font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem; letter-spacing: 0.2em; cursor: pointer;
-  border-radius: 6px; transition: all 0.25s;
-  box-shadow: 0 0 40px rgba(232,255,71,0.35);
-  position: relative; z-index: 1; margin-top: 28px;
-  animation: playPulse 2.5s ease-in-out infinite;
-}
-@keyframes playPulse {
-  0%,100% { box-shadow: 0 0 40px rgba(232,255,71,0.35); }
-  50%      { box-shadow: 0 0 70px rgba(232,255,71,0.6); }
-}
-.play-btn:active { transform: scale(0.96); }
-
-/* ═══════════════════════════════════════
-   JEU
-═══════════════════════════════════════ */
-.app {
-  position: relative; z-index: 1;
-  height: 100dvh;
-  display: flex; flex-direction: column; align-items: center;
-  padding: 8px 12px 4px;
-  max-width: 480px; margin: 0 auto;
-}
-
-.header {
-  width: 100%; display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 4px; flex-shrink: 0;
-}
-.game-title {
-  font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem;
-  letter-spacing: 0.15em; color: var(--accent);
-  text-shadow: 0 0 30px rgba(232,255,71,0.4); line-height: 1;
-  cursor: pointer;
-}
-.game-title:active { opacity: 0.7; }
+/* ── JEU ── */
+.app { position:relative; z-index:1; height:100dvh; display:flex; flex-direction:column; align-items:center; padding:8px 12px 4px; max-width:480px; margin:0 auto; }
+.header { width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; flex-shrink:0; }
+.game-title { font-family:'Bebas Neue',sans-serif; font-size:1.9rem; letter-spacing:0.15em; color:var(--accent); text-shadow:0 0 30px rgba(232,255,71,0.4); line-height:1; }
 .score-badge { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
 .score-label { font-family:'DM Mono',monospace; font-size:0.55rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
 .score-val { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--accent3); letter-spacing:0.1em; line-height:1; }
-
-/* Badge difficulté dans le jeu */
-.diff-badge {
-  font-family:'DM Mono',monospace; font-size:0.55rem;
-  letter-spacing:0.15em; text-transform:uppercase;
-  padding:3px 8px; border-radius:100px; margin-left:8px;
-}
+.diff-badge { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.15em; text-transform:uppercase; padding:3px 8px; border-radius:100px; margin-left:8px; }
 .diff-badge.easy   { background:rgba(72,219,251,0.12); color:var(--accent3); border:1px solid rgba(72,219,251,0.3); }
 .diff-badge.normal { background:rgba(232,255,71,0.12); color:var(--accent);  border:1px solid rgba(232,255,71,0.3); }
 .diff-badge.hard   { background:rgba(255,71,87,0.12);  color:var(--accent2); border:1px solid rgba(255,71,87,0.3); }
-
-.category-pill {
-  display:inline-flex; align-items:center; gap:6px;
-  background:var(--card); border:1px solid var(--border);
-  padding:4px 14px; border-radius:100px;
-  font-family:'DM Mono',monospace; font-size:1.05rem;
-  color:var(--text); letter-spacing:0.1em; text-transform:uppercase;
-  margin-bottom:4px; flex-shrink:0;
-}
+.category-pill { display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border); padding:4px 14px; border-radius:100px; font-family:'DM Mono',monospace; font-size:1.05rem; color:var(--text); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px; flex-shrink:0; }
 .cat-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
-
 .gallows-wrap { width:100%; display:flex; justify-content:center; margin-bottom:4px; flex-shrink:0; }
 #gallows-svg { width:180px; height:130px; }
-
 .attempts-bar { display:flex; gap:6px; margin-bottom:6px; flex-shrink:0; }
 .attempt-dot { width:8px; height:8px; border-radius:50%; background:var(--accent2); box-shadow:0 0 8px var(--accent2); transition:all 0.3s; }
 .attempt-dot.used { background:rgba(255,255,255,0.1); box-shadow:none; }
-
-.word-display {
-  display:flex; gap:8px; flex-wrap:nowrap;
-  justify-content:center; align-items:center;
-  width:100%; margin-bottom:6px; min-height:44px; flex-shrink:0;
-}
+.word-display { display:flex; gap:8px; flex-wrap:nowrap; justify-content:center; align-items:center; width:100%; margin-bottom:6px; min-height:44px; flex-shrink:0; }
 .word-display.medium { gap:5px; }
 .word-display.long   { gap:3px; }
-
 .letter-slot { display:flex; flex-direction:column; align-items:center; gap:3px; }
-.letter-char {
-  font-family:'DM Serif Display',serif; font-size:1.7rem;
-  line-height:1; min-width:26px; text-align:center;
-  color:var(--text); transition:all 0.3s; transform-origin:bottom;
-}
+.letter-char { font-family:'DM Serif Display',serif; font-size:1.7rem; line-height:1; min-width:26px; text-align:center; color:var(--text); transition:all 0.3s; transform-origin:bottom; }
 .word-display.medium .letter-char { font-size:1.35rem; min-width:21px; }
 .word-display.long   .letter-char { font-size:1.05rem; min-width:16px; }
 .letter-char.revealed { animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); color:var(--accent); }
 .letter-char.wrong    { color:var(--accent2); animation:shake 0.4s ease; }
-
 @keyframes popIn { 0%{transform:scale(0) rotateX(90deg);opacity:0} 100%{transform:scale(1) rotateX(0);opacity:1} }
 @keyframes shake  { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
-
 .letter-line { height:2px; background:rgba(255,255,255,0.2); border-radius:1px; width:26px; }
 .word-display.medium .letter-line { width:21px; }
 .word-display.long   .letter-line { width:16px; }
 .letter-line.revealed { background:var(--accent); box-shadow:0 0 6px var(--accent); }
-
-.hint-row {
-  font-family:'DM Mono',monospace; font-size:1.05rem;
-  color:var(--accent3); letter-spacing:0.06em;
-  margin-bottom:6px; text-align:center; min-height:20px;
-  font-weight:500; flex-shrink:0; padding:0 4px;
-}
-
+.hint-row { font-family:'DM Mono',monospace; font-size:1.05rem; color:var(--accent3); letter-spacing:0.06em; margin-bottom:6px; text-align:center; min-height:20px; font-weight:500; flex-shrink:0; padding:0 4px; }
 .keyboard { width:100%; display:flex; flex-direction:column; gap:5px; flex-shrink:0; }
 .key-row { display:flex; justify-content:center; gap:4px; }
-.key {
-  background:var(--card); border:1px solid var(--border);
-  color:var(--text); font-family:'DM Mono',monospace;
-  font-size:0.8rem; font-weight:500;
-  width:34px; height:40px; border-radius:6px;
-  cursor:pointer; transition:all 0.15s;
-  display:flex; align-items:center; justify-content:center;
-  position:relative; overflow:hidden;
-  -webkit-user-select:none; user-select:none;
-}
+.key { background:var(--card); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:500; width:34px; height:40px; border-radius:6px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; -webkit-user-select:none; user-select:none; }
 .key::after { content:''; position:absolute; inset:0; background:var(--accent); opacity:0; transition:opacity 0.1s; }
 .key:active::after { opacity:0.15; }
 .key:not([disabled]):hover { border-color:rgba(232,255,71,0.4); color:var(--accent); transform:translateY(-1px); }
 .key.correct { background:rgba(232,255,71,0.12); border-color:var(--accent); color:var(--accent); cursor:default; }
-.key.wrong   { background:rgba(255,71,87,0.08);  border-color:rgba(255,71,87,0.3); color:var(--accent2); cursor:default; opacity:0.5; }
+.key.wrong   { background:rgba(255,71,87,0.08); border-color:rgba(255,71,87,0.3); color:var(--accent2); cursor:default; opacity:0.5; }
+.game-audio-bar { display:flex; gap:10px; justify-content:flex-end; width:100%; padding:6px 0 2px; flex-shrink:0; }
+.game-audio-bar button { background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35); color:#e8ff47; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; padding:7px 12px; border-radius:100px; cursor:pointer; transition:all 0.2s; }
+.game-audio-bar button:active { transform:scale(0.95); }
+.back-menu-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; padding:6px 12px; border-radius:100px; cursor:pointer; transition:all 0.2s; -webkit-user-select:none; user-select:none; }
+.back-menu-btn:active { transform:scale(0.95); background:rgba(255,255,255,0.1); }
 
-.motmagique-gif {
-  width: 220px;
-  max-width: 80vw;
-  border-radius: 8px;
-  animation: bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
-}
-.motmagique-gif.hidden { display: none; }
-
-.overlay {
-  position:fixed; inset:0; background:rgba(15,12,26,0.93);
-  backdrop-filter:blur(12px);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  z-index:50; gap:20px; padding:32px; text-align:center; transition:opacity 0.4s;
-}
+/* ── OVERLAY ── */
+.motmagique-gif { width:220px; max-width:80vw; border-radius:8px; animation:bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+.motmagique-gif.hidden { display:none; }
+.overlay { position:fixed; inset:0; background:rgba(15,12,26,0.93); backdrop-filter:blur(12px); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:50; gap:20px; padding:32px; text-align:center; transition:opacity 0.4s; }
 .overlay.hidden { opacity:0; pointer-events:none; }
 .overlay-emoji { font-size:4rem; animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1); }
 @keyframes bounceIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
@@ -275,97 +118,19 @@ body::before {
 .overlay-title.lose { color:var(--accent2); text-shadow:0 0 40px rgba(255,71,87,0.5); }
 .overlay-word { font-family:'DM Serif Display',serif; font-style:italic; font-size:1.4rem; color:var(--muted); }
 .overlay-word span { color:var(--text); font-style:normal; }
-.play-again-btn {
-  background:var(--accent); color:var(--bg); border:none;
-  padding:14px 40px; font-family:'Bebas Neue',sans-serif;
-  font-size:1.4rem; letter-spacing:0.15em; cursor:pointer;
-  border-radius:4px; transition:all 0.2s;
-  box-shadow:0 0 30px rgba(232,255,71,0.3);
-}
+.play-again-btn { background:var(--accent); color:var(--bg); border:none; padding:14px 40px; font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; box-shadow:0 0 30px rgba(232,255,71,0.3); }
 .play-again-btn:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(232,255,71,0.5); }
-
-/* Bouton retour menu dans overlay */
-.menu-btn {
-  background: transparent; border: 1px solid var(--border);
-  color: var(--muted); padding: 10px 30px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1rem; letter-spacing: 0.15em;
-  cursor: pointer; border-radius: 4px; transition: all 0.2s;
-}
-.menu-btn:hover { border-color: var(--muted); color: var(--text); }
-
-.bonus-btn {
-  background: transparent; border: 2px solid var(--accent3);
-  color: var(--accent3); padding: 10px 30px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.2rem; letter-spacing: 0.15em;
-  cursor: pointer; border-radius: 4px; transition: all 0.2s;
-}
-.bonus-btn:hover { background: rgba(72,219,251,0.1); }
-.bonus-btn.hidden { display:none; }
-
-.viewer {
-  position:fixed; inset:0; background:#000;
-  display:flex; align-items:center; justify-content:center;
-  z-index:100;
-}
-.viewer.hidden { display:none; }
-.viewer img, .viewer video {
-  max-width:100%; max-height:100%;
-  object-fit:contain; cursor:pointer;
-}
-
-.back-menu-btn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
-  padding: 6px 12px; border-radius: 100px;
-  cursor: pointer; transition: all 0.2s;
-  -webkit-user-select: none; user-select: none;
-}
-.back-menu-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
-
-.game-audio-bar {
-  display:flex; gap:10px; justify-content:flex-end;
-  width:100%; padding:6px 0 2px; flex-shrink:0;
-}
-.game-audio-bar button {
-  background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35);
-  color:#e8ff47; font-family:'DM Mono',monospace;
-  font-size:0.65rem; letter-spacing:0.1em;
-  padding:7px 12px; border-radius:100px;
-  cursor:pointer; transition:all 0.2s;
-}
-.game-audio-bar button:active { transform:scale(0.95); }
-
-/* Bouton son dans le menu */
-.menu-sound-btn {
-  background: rgba(232,255,71,0.08);
-  border: 1px solid rgba(232,255,71,0.35);
-  color: #e8ff47;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem; letter-spacing: 0.1em;
-  padding: 7px 20px; border-radius: 100px;
-  cursor: pointer; transition: all 0.2s;
-  margin-top: 10px;
-  position: relative; z-index: 1;
-}
-.menu-sound-btn:active { transform: scale(0.95); }
+.menu-btn { background:transparent; border:1px solid var(--border); color:var(--muted); padding:10px 30px; font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; }
+.menu-btn:hover { border-color:var(--muted); color:var(--text); }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     ÉCRAN MENU
-════════════════════════════════════════════ -->
+<!-- ═══════════ MENU ═══════════ -->
 <div id="menu-screen">
   <div class="menu-bg"></div>
-
+  <div class="highscore-bar">🏆 High Score&nbsp;: <span id="hs-display">0</span></div>
   <div class="menu-logo">LE PENDU</div>
-
-  <!-- Petit pendu décoratif -->
   <div class="menu-gallows">
     <svg width="120" height="90" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="20" y1="155" x2="200" y2="155" stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
@@ -380,32 +145,22 @@ body::before {
       <line x1="140" y1="100" x2="162" y2="130" stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
   </div>
-
-  <!-- Difficulté -->
   <div class="menu-section-title">Difficulté</div>
   <div class="diff-group">
     <button class="diff-btn active-easy" id="btn-easy"   onclick="setDiff('easy')">Facile</button>
     <button class="diff-btn"             id="btn-normal" onclick="setDiff('normal')">Normal</button>
     <button class="diff-btn"             id="btn-hard"   onclick="setDiff('hard')">Difficile</button>
   </div>
-
-  <!-- Indices -->
   <div class="menu-section-title">Options</div>
-  <div class="toggle-row" id="hint-toggle" onclick="toggleHints()">
+  <div class="toggle-row" onclick="toggleHints()">
     <span class="toggle-label">💡 Indices</span>
     <div class="toggle-switch on" id="hint-switch"></div>
   </div>
-
-  <!-- Jouer -->
   <button class="play-btn" onclick="startGame()">▶ JOUER</button>
-
-  <!-- Son menu -->
   <button class="menu-sound-btn" id="menu-sound-btn" onclick="toggleSound()">🔊 Son ON</button>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     ÉCRAN JEU
-════════════════════════════════════════════ -->
+<!-- ═══════════ JEU ═══════════ -->
 <div class="app">
   <div class="header">
     <div style="display:flex;align-items:center;gap:6px">
@@ -420,12 +175,10 @@ body::before {
       </div>
     </div>
   </div>
-
   <div class="category-pill">
     <div class="cat-dot"></div>
     <span id="category-label">—</span>
   </div>
-
   <div class="gallows-wrap">
     <svg id="gallows-svg" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
       <line x1="20" y1="155" x2="200" y2="155" stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
@@ -440,7 +193,6 @@ body::before {
       <line id="p-rleg" x1="140" y1="100" x2="162" y2="130" stroke="#ff4757" stroke-width="2.5" stroke-linecap="round" opacity="0" style="transition:opacity 0.4s"/>
     </svg>
   </div>
-
   <div class="attempts-bar" id="attempts-bar"></div>
   <div class="word-display"  id="word-display"></div>
   <div class="hint-row"      id="hint-row"></div>
@@ -451,153 +203,138 @@ body::before {
   </div>
 </div>
 
-
+<!-- ═══════════ OVERLAY FIN DE PARTIE ═══════════ -->
 <div class="overlay hidden" id="overlay">
   <img id="motmagique-gif" src="Motmagique.gif" class="motmagique-gif hidden" alt="">
   <div class="overlay-emoji" id="overlay-emoji"></div>
   <div class="overlay-title" id="overlay-title"></div>
   <div class="overlay-word"  id="overlay-word"></div>
-  <button class="bonus-btn hidden" id="img-btn">🖼 VOIR L'IMAGE</button>
-  <button class="bonus-btn hidden" id="vid-btn">🎬 VOIR LA VIDÉO</button>
   <button class="play-again-btn" id="play-again-btn">REJOUER</button>
   <button class="menu-btn" onclick="goToMenu()">☰ MENU</button>
 </div>
-
-<!-- Visionneuse image -->
-<div class="viewer hidden" id="img-viewer">
-  <img id="img-el" src="" alt="">
-</div>
-
-<!-- Visionneuse vidéo -->
-<div class="viewer hidden" id="vid-viewer">
-  <video id="vid-el" src="" playsinline></video>
-</div>
-
-<!-- boutons son déplacés dans chaque écran -->
 
 <script>
 // ═══════════════════════════════════════════════════════
 //  LISTES DE MOTS
 // ═══════════════════════════════════════════════════════
-
 const WORDS_EASY = [
-  { word:"ELEPHANT",   cat:"Animaux",       hint:"Le plus grand mammifère terrestre" },
-  { word:"VOLCAN",     cat:"Nature",        hint:"Crache de la lave" },
-  { word:"GUITARE",    cat:"Musique",       hint:"Instrument à cordes pincées" },
-  { word:"PYRAMIDE",   cat:"Histoire",      hint:"Tombeau des pharaons" },
-  { word:"CHOCOLAT",   cat:"Nourriture",    hint:"Fait du cacao" },
-  { word:"DALMATIEN",  cat:"Animaux",       hint:"Chien tacheté de noir" },
-  { word:"FUSEE",      cat:"Espace",        hint:"Va dans les étoiles" },
-  { word:"CROCODILE",  cat:"Animaux",       hint:"Reptile des marais" },
-  { word:"PARACHUTE",  cat:"Sport",         hint:"Ralentit la chute" },
-  { word:"DIAMANT",    cat:"Minéraux",      hint:"La pierre la plus dure" },
-  { word:"AURORE",     cat:"Nature",        hint:"Lumières polaires colorées" },
-  { word:"VAMPIRE",    cat:"Fantastique",   hint:"Craint l'ail et le soleil" },
-  { word:"CERISIER",   cat:"Arbres",        hint:"Fleurit en rose au Japon" },
-  { word:"TORNADE",    cat:"Météo",         hint:"Colonne d'air en rotation" },
-  { word:"SORCIERE",   cat:"Fantastique",   hint:"Chevauche un balai" },
-  { word:"MANCHOT",    cat:"Animaux",       hint:"Pingouin qui ne vole pas" },
-  { word:"TAMBOUR",    cat:"Musique",       hint:"Instrument à percussion" },
-  { word:"REQUIN",     cat:"Animaux",       hint:"Prédateur des océans" },
-  { word:"CHATEAU",    cat:"Architecture",  hint:"Résidence médiévale fortifiée" },
-  { word:"DRAGON",     cat:"Fantastique",   hint:"Crache du feu et vole" },
-  { word:"GIRAFE",     cat:"Animaux",       hint:"A le cou le plus long" },
-  { word:"LICORNE",    cat:"Fantastique",   hint:"Cheval avec une corne magique" },
-  { word:"PIZZA",      cat:"Nourriture",    hint:"Spécialité italienne ronde" },
-  { word:"DAUPHIN",    cat:"Animaux",       hint:"Mammifère marin très intelligent" },
-  { word:"CACTUS",     cat:"Nature",        hint:"Plante du désert avec des épines" },
-  { word:"ASTRONAUTE", cat:"Espace",        hint:"Pilote une navette spatiale" },
-  { word:"BOULANGER",  cat:"Métiers",       hint:"Fabrique le pain chaque matin" },
-  { word:"CASCADE",    cat:"Nature",        hint:"Chute d'eau naturelle" },
-  { word:"DETECTIVE",  cat:"Métiers",       hint:"Résout les mystères et enquêtes" },
-  { word:"ECUREUIL",   cat:"Animaux",       hint:"Grimpe aux arbres et mange des noisettes" },
-  { word:"FANTOME",    cat:"Fantastique",   hint:"Esprit invisible qui hante les maisons" },
-  { word:"GALAXIE",    cat:"Espace",        hint:"Immense groupe d'étoiles" },
-  { word:"HIBOU",      cat:"Animaux",       hint:"Oiseau nocturne qui fait ouhou" },
-  { word:"IGLOO",      cat:"Architecture",  hint:"Maison de glace des Inuits" },
-  { word:"JONGLEUR",   cat:"Spectacle",     hint:"Lance des balles en l'air" },
-  { word:"KOALA",      cat:"Animaux",       hint:"Mange des feuilles d'eucalyptus" },
-  { word:"LAGON",      cat:"Nature",        hint:"Mer calme entourée de coraux" },
-  { word:"MEDUSE",     cat:"Animaux",       hint:"Créature transparente des océans" },
-  { word:"NAUFRAGE",   cat:"Aventure",      hint:"Bateau coulé au fond de la mer" },
-  { word:"OURAGAN",    cat:"Météo",         hint:"Tempête tropicale très violente" },
-  { word:"PINGOUIN",   cat:"Animaux",       hint:"Oiseau noir et blanc qui ne vole pas" },
-  { word:"CAMELEON",   cat:"Animaux",       hint:"Change de couleur pour se camoufler" },
-  { word:"ARCHIPEL",   cat:"Géographie",    hint:"Groupe d'îles rapprochées" },
-  { word:"MARATHON",   cat:"Sport",         hint:"Course de 42 km" },
-  { word:"ALCHIMIE",   cat:"Histoire",      hint:"Ancêtre de la chimie" },
-  { word:"SQUELETTE",  cat:"Anatomie",      hint:"Structure osseuse du corps" },
-  { word:"ORIGAMI",    cat:"Art",           hint:"Pliage de papier japonais" },
-  { word:"CRATERE",    cat:"Nature",        hint:"Dépression formée par un impact ou un volcan" },
-  { word:"METEORITE",  cat:"Espace",        hint:"Roche venue de l'espace tombée sur Terre" },
-  { word:"LABYRINTHE", cat:"Aventure",      hint:"Chemin complexe où l'on se perd facilement" },
-  { word:"PANTHERE",   cat:"Animaux",       hint:"Félin discret souvent noir" },
-  { word:"SYMPHONIE",  cat:"Musique",       hint:"Œuvre orchestrale en plusieurs mouvements" },
-  { word:"MONASTERE",  cat:"Architecture",  hint:"Lieu de vie pour moines ou moniales" },
-  { word:"TRESOR",     cat:"Aventure",      hint:"Butin caché recherché par les pirates" },
-  { word:"GRENOUILLE", cat:"Animaux",       hint:"Amphibien qui coasse" },
-  { word:"HORIZON",    cat:"Nature",        hint:"Ligne où ciel et terre semblent se rejoindre" },
-  { word:"MIRAGE",     cat:"Phénomènes",    hint:"Illusion optique dans le désert" },
-  { word:"PAPYRUS",    cat:"Histoire",      hint:"Ancien support d'écriture égyptien" },
-  { word:"VORTEX",     cat:"Phénomènes",    hint:"Tourbillon d'air ou d'eau" },
-  { word:"CITADELLE",  cat:"Architecture",  hint:"Fortification protégeant une ville" },
-  { word:"GOUFFRE",    cat:"Nature",        hint:"Trou profond dans le sol" },
-  { word:"NEBULEUSE",  cat:"Espace",        hint:"Nuage cosmique où naissent les étoiles" },
-  { word:"GLACON",     cat:"Objet",         hint:"Petit cube qui refroidit les boissons" },
-  { word:"PIRANHA",    cat:"Animaux",       hint:"Petit poisson aux dents très tranchantes" },
-  { word:"CARAVANE",   cat:"Voyage",        hint:"Maison mobile que l'on tracte" },
-  { word:"MOUSTIQUE",  cat:"Animaux",       hint:"Insecte qui pique et fait du bruit la nuit" }
+  { word:"ELEPHANT",   cat:"Animaux",      hint:"Le plus grand mammifère terrestre" },
+  { word:"VOLCAN",     cat:"Nature",       hint:"Crache de la lave" },
+  { word:"GUITARE",    cat:"Musique",      hint:"Instrument à cordes pincées" },
+  { word:"PYRAMIDE",   cat:"Histoire",     hint:"Tombeau des pharaons" },
+  { word:"CHOCOLAT",   cat:"Nourriture",   hint:"Fait du cacao" },
+  { word:"DALMATIEN",  cat:"Animaux",      hint:"Chien tacheté de noir" },
+  { word:"FUSEE",      cat:"Espace",       hint:"Va dans les étoiles" },
+  { word:"CROCODILE",  cat:"Animaux",      hint:"Reptile des marais" },
+  { word:"PARACHUTE",  cat:"Sport",        hint:"Ralentit la chute" },
+  { word:"DIAMANT",    cat:"Minéraux",     hint:"La pierre la plus dure" },
+  { word:"AURORE",     cat:"Nature",       hint:"Lumières polaires colorées" },
+  { word:"VAMPIRE",    cat:"Fantastique",  hint:"Craint l'ail et le soleil" },
+  { word:"CERISIER",   cat:"Arbres",       hint:"Fleurit en rose au Japon" },
+  { word:"TORNADE",    cat:"Météo",        hint:"Colonne d'air en rotation" },
+  { word:"SORCIERE",   cat:"Fantastique",  hint:"Chevauche un balai" },
+  { word:"MANCHOT",    cat:"Animaux",      hint:"Pingouin qui ne vole pas" },
+  { word:"TAMBOUR",    cat:"Musique",      hint:"Instrument à percussion" },
+  { word:"REQUIN",     cat:"Animaux",      hint:"Prédateur des océans" },
+  { word:"CHATEAU",    cat:"Architecture", hint:"Résidence médiévale fortifiée" },
+  { word:"DRAGON",     cat:"Fantastique",  hint:"Crache du feu et vole" },
+  { word:"GIRAFE",     cat:"Animaux",      hint:"A le cou le plus long" },
+  { word:"LICORNE",    cat:"Fantastique",  hint:"Cheval avec une corne magique" },
+  { word:"PIZZA",      cat:"Nourriture",   hint:"Spécialité italienne ronde" },
+  { word:"DAUPHIN",    cat:"Animaux",      hint:"Mammifère marin très intelligent" },
+  { word:"CACTUS",     cat:"Nature",       hint:"Plante du désert avec des épines" },
+  { word:"ASTRONAUTE", cat:"Espace",       hint:"Pilote une navette spatiale" },
+  { word:"BOULANGER",  cat:"Métiers",      hint:"Fabrique le pain chaque matin" },
+  { word:"CASCADE",    cat:"Nature",       hint:"Chute d'eau naturelle" },
+  { word:"DETECTIVE",  cat:"Métiers",      hint:"Résout les mystères et enquêtes" },
+  { word:"ECUREUIL",   cat:"Animaux",      hint:"Grimpe aux arbres et mange des noisettes" },
+  { word:"FANTOME",    cat:"Fantastique",  hint:"Esprit invisible qui hante les maisons" },
+  { word:"GALAXIE",    cat:"Espace",       hint:"Immense groupe d'étoiles" },
+  { word:"HIBOU",      cat:"Animaux",      hint:"Oiseau nocturne qui fait ouhou" },
+  { word:"IGLOO",      cat:"Architecture", hint:"Maison de glace des Inuits" },
+  { word:"JONGLEUR",   cat:"Spectacle",    hint:"Lance des balles en l'air" },
+  { word:"KOALA",      cat:"Animaux",      hint:"Mange des feuilles d'eucalyptus" },
+  { word:"LAGON",      cat:"Nature",       hint:"Mer calme entourée de coraux" },
+  { word:"MEDUSE",     cat:"Animaux",      hint:"Créature transparente des océans" },
+  { word:"NAUFRAGE",   cat:"Aventure",     hint:"Bateau coulé au fond de la mer" },
+  { word:"OURAGAN",    cat:"Météo",        hint:"Tempête tropicale très violente" },
+  { word:"PINGOUIN",   cat:"Animaux",      hint:"Oiseau noir et blanc qui ne vole pas" },
+  { word:"CAMELEON",   cat:"Animaux",      hint:"Change de couleur pour se camoufler" },
+  { word:"ARCHIPEL",   cat:"Géographie",   hint:"Groupe d'îles rapprochées" },
+  { word:"MARATHON",   cat:"Sport",        hint:"Course de 42 km" },
+  { word:"ALCHIMIE",   cat:"Histoire",     hint:"Ancêtre de la chimie" },
+  { word:"SQUELETTE",  cat:"Anatomie",     hint:"Structure osseuse du corps" },
+  { word:"ORIGAMI",    cat:"Art",          hint:"Pliage de papier japonais" },
+  { word:"CRATERE",    cat:"Nature",       hint:"Dépression formée par un impact ou un volcan" },
+  { word:"METEORITE",  cat:"Espace",       hint:"Roche venue de l'espace tombée sur Terre" },
+  { word:"LABYRINTHE", cat:"Aventure",     hint:"Chemin complexe où l'on se perd facilement" },
+  { word:"PANTHERE",   cat:"Animaux",      hint:"Félin discret souvent noir" },
+  { word:"SYMPHONIE",  cat:"Musique",      hint:"Œuvre orchestrale en plusieurs mouvements" },
+  { word:"MONASTERE",  cat:"Architecture", hint:"Lieu de vie pour moines ou moniales" },
+  { word:"TRESOR",     cat:"Aventure",     hint:"Butin caché recherché par les pirates" },
+  { word:"GRENOUILLE", cat:"Animaux",      hint:"Amphibien qui coasse" },
+  { word:"HORIZON",    cat:"Nature",       hint:"Ligne où ciel et terre semblent se rejoindre" },
+  { word:"MIRAGE",     cat:"Phénomènes",   hint:"Illusion optique dans le désert" },
+  { word:"PAPYRUS",    cat:"Histoire",     hint:"Ancien support d'écriture égyptien" },
+  { word:"VORTEX",     cat:"Phénomènes",   hint:"Tourbillon d'air ou d'eau" },
+  { word:"CITADELLE",  cat:"Architecture", hint:"Fortification protégeant une ville" },
+  { word:"GOUFFRE",    cat:"Nature",       hint:"Trou profond dans le sol" },
+  { word:"NEBULEUSE",  cat:"Espace",       hint:"Nuage cosmique où naissent les étoiles" },
+  { word:"GLACON",     cat:"Objet",        hint:"Petit cube qui refroidit les boissons" },
+  { word:"PIRANHA",    cat:"Animaux",      hint:"Petit poisson aux dents très tranchantes" },
+  { word:"CARAVANE",   cat:"Voyage",       hint:"Maison mobile que l'on tracte" },
+  { word:"MOUSTIQUE",  cat:"Animaux",      hint:"Insecte qui pique et fait du bruit la nuit" }
 ];
 
 const WORDS_NORMAL = [
-  { word:"METAMORPHOSE", cat:"Sciences",      hint:"Transformation complète d'un être vivant" },
-  { word:"BIOLUMINESCENCE", cat:"Nature",     hint:"Lumière produite par des organismes vivants" },
-  { word:"CARTOGRAPHIE", cat:"Géographie",   hint:"Art de dessiner des cartes" },
-  { word:"HIEROGLYPHE",  cat:"Histoire",      hint:"Écriture sacrée de l'Égypte ancienne" },
-  { word:"PALINDROME",   cat:"Langage",       hint:"Mot qui se lit pareil à l'envers" },
-  { word:"TROPOSPHERE",  cat:"Météo",         hint:"Couche basse de l'atmosphère terrestre" },
-  { word:"ARCHIPELAGO",  cat:"Géographie",    hint:"Vaste ensemble d'îles dispersées" },
-  { word:"PHOTOSYNTHESE",cat:"Sciences",      hint:"Les plantes fabriquent leur nourriture avec la lumière" },
-  { word:"ARCHIPEL",      cat:"Géographie",   hint:"Groupe d'îles en mer" },
-  { word:"AVALANCHE",     cat:"Nature",        hint:"Masse de neige qui dévale la montagne" },
-  { word:"BIBLIOTHEQUE",  cat:"Culture",       hint:"Lieu où l'on emprunte des livres" },
-  { word:"CALLIGRAPHIE",  cat:"Art",           hint:"Art de bien former les lettres" },
-  { word:"CAMELEON",      cat:"Animaux",       hint:"Change de couleur selon son humeur" },
-  { word:"CARNAVAL",      cat:"Fêtes",         hint:"Fête avec déguisements et confettis" },
-  { word:"CATHEDRALE",    cat:"Architecture",  hint:"Grande église avec des vitraux" },
-  { word:"CHROMOSOME",    cat:"Sciences",      hint:"Structure qui porte les gènes" },
-  { word:"CIVILISATION",  cat:"Histoire",      hint:"Société humaine développée" },
-  { word:"COMETЕ",        cat:"Espace",        hint:"Astre avec une longue traînée lumineuse" },
-  { word:"COMPETITION",   cat:"Sport",         hint:"Affrontement pour gagner un titre" },
-  { word:"CONSTELLATION", cat:"Espace",        hint:"Groupe d'étoiles formant une figure" },
-  { word:"CONTINENTE",    cat:"Géographie",    hint:"Grande masse de terre émergée" },
-  { word:"CORDILLERE",    cat:"Géographie",    hint:"Longue chaîne de montagnes" },
-  { word:"CROISSANCE",    cat:"Sciences",      hint:"Augmentation progressive de taille" },
-  { word:"CRYSTALISER",   cat:"Sciences",      hint:"Se transformer en cristaux" },
-  { word:"DECOMPOSER",    cat:"Sciences",      hint:"Se transformer par putréfaction" },
-  { word:"DEMOCRATIE",    cat:"Politique",     hint:"Le peuple choisit ses dirigeants" },
-  { word:"DESERTIQUE",    cat:"Nature",        hint:"Relatif aux zones très sèches" },
-  { word:"DIMENSION",     cat:"Sciences",      hint:"Mesure d'un espace ou objet" },
-  { word:"DIPLOMATIE",    cat:"Politique",     hint:"Art de négocier entre nations" },
-  { word:"DISCIPLINE",    cat:"Éducation",     hint:"Respect des règles établies" },
-  { word:"ECOSYSTEME",    cat:"Nature",        hint:"Milieu naturel et ses habitants" },
-  { word:"ELECTRICITE",   cat:"Sciences",      hint:"Énergie qui alimente les appareils" },
-  { word:"ENCYCLOPEDIE",  cat:"Culture",       hint:"Grand livre de tout le savoir" },
-  { word:"ENIGMATIQUE",   cat:"Concept",       hint:"Difficile à comprendre ou expliquer" },
-  { word:"EQUILIBRE",     cat:"Sciences",      hint:"État de stabilité parfaite" },
-  { word:"EVOLUTION",     cat:"Sciences",      hint:"Transformation lente des espèces" },
-  { word:"EXPEDITION",    cat:"Aventure",      hint:"Voyage d'exploration organisé" },
-  { word:"EXPERIENCE",    cat:"Sciences",      hint:"Test pour vérifier une hypothèse" },
-  { word:"FANTAISIE",     cat:"Art",           hint:"Imagination créative sans limite" },
-  { word:"FERMENTATION",  cat:"Sciences",      hint:"Transformation par des micro-organismes" },
-  { word:"FOSSILISER",    cat:"Sciences",      hint:"Se transformer en fossile avec le temps" },
-  { word:"GEOMETRIE",     cat:"Maths",         hint:"Étude des formes et des figures" },
-  { word:"GLACIATION",    cat:"Nature",        hint:"Période de grand froid sur Terre" },
-  { word:"GOUVERNEMENT",  cat:"Politique",     hint:"Ensemble des dirigeants d'un pays" },
-  { word:"GRAVITATION",   cat:"Sciences",      hint:"Force qui attire les corps entre eux" },
-  { word:"HEMISPHERE",    cat:"Géographie",    hint:"Moitié du globe terrestre" },
-  { word:"HIBERNATION",   cat:"Animaux",       hint:"Sommeil profond de l'hiver" },
-  { word:"HOLOGRAMME",    cat:"Technologie",   hint:"Image en trois dimensions projetée" }
+  { word:"METAMORPHOSE",   cat:"Sciences",     hint:"Transformation complète d'un être vivant" },
+  { word:"CARTOGRAPHIE",   cat:"Géographie",   hint:"Art de dessiner des cartes" },
+  { word:"HIEROGLYPHE",    cat:"Histoire",     hint:"Écriture sacrée de l'Égypte ancienne" },
+  { word:"PALINDROME",     cat:"Langage",      hint:"Mot qui se lit pareil à l'envers" },
+  { word:"TROPOSPHERE",    cat:"Météo",        hint:"Couche basse de l'atmosphère terrestre" },
+  { word:"PHOTOSYNTHESE",  cat:"Sciences",     hint:"Les plantes fabriquent leur nourriture avec la lumière" },
+  { word:"AVALANCHE",      cat:"Nature",       hint:"Masse de neige qui dévale la montagne" },
+  { word:"BIBLIOTHEQUE",   cat:"Culture",      hint:"Lieu où l'on emprunte des livres" },
+  { word:"CALLIGRAPHIE",   cat:"Art",          hint:"Art de bien former les lettres" },
+  { word:"CARNAVAL",       cat:"Fêtes",        hint:"Fête avec déguisements et confettis" },
+  { word:"CATHEDRALE",     cat:"Architecture", hint:"Grande église avec des vitraux" },
+  { word:"CHROMOSOME",     cat:"Sciences",     hint:"Structure qui porte les gènes" },
+  { word:"CIVILISATION",   cat:"Histoire",     hint:"Société humaine développée" },
+  { word:"COMPETITION",    cat:"Sport",        hint:"Affrontement pour gagner un titre" },
+  { word:"CONSTELLATION",  cat:"Espace",       hint:"Groupe d'étoiles formant une figure" },
+  { word:"CORDILLERE",     cat:"Géographie",   hint:"Longue chaîne de montagnes" },
+  { word:"CROISSANCE",     cat:"Sciences",     hint:"Augmentation progressive de taille" },
+  { word:"DEMOCRATIE",     cat:"Politique",    hint:"Le peuple choisit ses dirigeants" },
+  { word:"DIPLOMATIE",     cat:"Politique",    hint:"Art de négocier entre nations" },
+  { word:"ECOSYSTEME",     cat:"Nature",       hint:"Milieu naturel et ses habitants" },
+  { word:"ELECTRICITE",    cat:"Sciences",     hint:"Énergie qui alimente les appareils" },
+  { word:"ENCYCLOPEDIE",   cat:"Culture",      hint:"Grand livre de tout le savoir" },
+  { word:"EQUILIBRE",      cat:"Sciences",     hint:"État de stabilité parfaite" },
+  { word:"EVOLUTION",      cat:"Sciences",     hint:"Transformation lente des espèces" },
+  { word:"EXPEDITION",     cat:"Aventure",     hint:"Voyage d'exploration organisé" },
+  { word:"FERMENTATION",   cat:"Sciences",     hint:"Transformation par des micro-organismes" },
+  { word:"GEOMETRIE",      cat:"Maths",        hint:"Étude des formes et des figures" },
+  { word:"GLACIATION",     cat:"Nature",       hint:"Période de grand froid sur Terre" },
+  { word:"GOUVERNEMENT",   cat:"Politique",    hint:"Ensemble des dirigeants d'un pays" },
+  { word:"GRAVITATION",    cat:"Sciences",     hint:"Force qui attire les corps entre eux" },
+  { word:"HEMISPHERE",     cat:"Géographie",   hint:"Moitié du globe terrestre" },
+  { word:"HIBERNATION",    cat:"Animaux",      hint:"Sommeil profond de l'hiver" },
+  { word:"HOLOGRAMME",     cat:"Technologie",  hint:"Image en trois dimensions projetée" },
+  { word:"DIMENSION",      cat:"Sciences",     hint:"Mesure d'un espace ou objet" },
+  { word:"DISCIPLINE",     cat:"Éducation",    hint:"Respect des règles établies" },
+  { word:"ENIGMATIQUE",    cat:"Concept",      hint:"Difficile à comprendre ou expliquer" },
+  { word:"FANTAISIE",      cat:"Art",          hint:"Imagination créative sans limite" },
+  { word:"FOSSILISER",     cat:"Sciences",     hint:"Se transformer en fossile avec le temps" },
+  { word:"BIOLUMINESCENCE",cat:"Nature",       hint:"Lumière produite par des organismes vivants" },
+  { word:"VOLCANOLOGIE",   cat:"Sciences",     hint:"Étude scientifique des volcans" },
+  { word:"METEOROLOGIE",   cat:"Sciences",     hint:"Science qui étudie le temps et le climat" },
+  { word:"SEISMOLOGIE",    cat:"Sciences",     hint:"Étude des tremblements de terre" },
+  { word:"OCEANOGRAPHIE",  cat:"Sciences",     hint:"Étude scientifique des océans" },
+  { word:"ARCHEOLOGIE",    cat:"Histoire",     hint:"Étude des civilisations par leurs vestiges" },
+  { word:"CARTILAGE",      cat:"Anatomie",     hint:"Tissu souple entre les os" },
+  { word:"BIOSPHERE",      cat:"Nature",       hint:"Ensemble des êtres vivants sur Terre" },
+  { word:"ATMOSPHERE",     cat:"Sciences",     hint:"Couche de gaz entourant la Terre" },
+  { word:"PHOTOGRAPHIE",   cat:"Art",          hint:"Capture d'images par la lumière" }
 ];
 
 const WORDS_HARD = [
@@ -609,50 +346,50 @@ const WORDS_HARD = [
   { word:"ZOROASTRISME",   cat:"Religion",    hint:"Ancienne religion perse du feu sacré" },
   { word:"TACHYCARDIE",    cat:"Médecine",    hint:"Accélération anormale du rythme cardiaque" },
   { word:"PALEONTOLOGIE",  cat:"Sciences",    hint:"Science des fossiles et des espèces disparues" },
-  { word:"ANTHROPOLOGIE",   cat:"Sciences",      hint:"Étude de l'être humain et des sociétés" },
-  { word:"ASTROPHYSIQUE",   cat:"Espace",        hint:"Physique appliquée aux astres" },
-  { word:"BACTERIOPHAGE",   cat:"Sciences",      hint:"Virus qui détruit les bactéries" },
-  { word:"BIOGEOGRAPHIE",   cat:"Sciences",      hint:"Répartition des êtres vivants sur Terre" },
-  { word:"BIOLUMINESCENCE", cat:"Nature",        hint:"Lumière produite par des organismes vivants" },
-  { word:"BUREAUCRATIE",    cat:"Politique",     hint:"Excès de formalités administratives" },
-  { word:"CALVINISME",      cat:"Religion",      hint:"Courant protestant fondé par Calvin" },
-  { word:"CARTILAGINEUX",   cat:"Anatomie",      hint:"Constitué de cartilage, pas d'os" },
-  { word:"CATASTROPHISME",  cat:"Sciences",      hint:"Théorie des grands bouleversements soudains" },
-  { word:"CHLOROPHYLLE",    cat:"Sciences",      hint:"Pigment vert des plantes" },
-  { word:"CINEMATOGRAPHIE", cat:"Art",           hint:"Technique de fabrication des films" },
-  { word:"CIRCUMPOLAIRE",   cat:"Géographie",    hint:"Qui tourne autour d'un pôle" },
-  { word:"CLEPTOMANIE",     cat:"Médecine",      hint:"Impulsion irrésistible à voler" },
-  { word:"COSMOLOGIQUE",    cat:"Espace",        hint:"Relatif à l'origine de l'univers" },
-  { word:"CRYPTOGRAPHIE",   cat:"Technologie",   hint:"Art de coder les messages secrets" },
-  { word:"CYTOPLASME",      cat:"Sciences",      hint:"Substance qui remplit les cellules" },
-  { word:"DENDROLOGIE",     cat:"Sciences",      hint:"Étude scientifique des arbres" },
-  { word:"DIALECTIQUE",     cat:"Philosophie",   hint:"Art du raisonnement par opposés" },
-  { word:"ELECTROLYSE",     cat:"Sciences",      hint:"Décomposition par courant électrique" },
-  { word:"EMBRYOLOGIE",     cat:"Sciences",      hint:"Étude du développement de l'embryon" },
-  { word:"ENDOCRINOLOGIE",  cat:"Médecine",      hint:"Étude des glandes et hormones" },
-  { word:"ENTOMOLOGIE",     cat:"Sciences",      hint:"Étude scientifique des insectes" },
-  { word:"EPISTEMOLOGIE",   cat:"Philosophie",   hint:"Étude des fondements de la connaissance" },
-  { word:"ETHNOGRAPHIE",    cat:"Sciences",      hint:"Description des peuples et cultures" },
-  { word:"EXOBIOLOGIE",     cat:"Espace",        hint:"Recherche de vie extraterrestre" },
-  { word:"GEOSTATIONNAIRE", cat:"Espace",        hint:"Satellite fixe au-dessus d'un point" },
-  { word:"GEOTHERMIQUE",    cat:"Nature",        hint:"Énergie tirée de la chaleur terrestre" },
-  { word:"HERMENEUTIQUE",   cat:"Philosophie",   hint:"Art d'interpréter les textes anciens" },
-  { word:"HISTOLOGIQUE",    cat:"Médecine",      hint:"Relatif à l'étude des tissus vivants" },
-  { word:"HYDROPONIQUE",    cat:"Sciences",      hint:"Culture de plantes sans terre" },
-  { word:"HYPOCONDRIAQUE",  cat:"Médecine",      hint:"Obsédé par la crainte d'être malade" },
-  { word:"ICHTYOSAURE",     cat:"Histoire",      hint:"Reptile marin de l'ère secondaire" },
-  { word:"IMMUNOLOGIQUE",   cat:"Médecine",      hint:"Relatif aux défenses de l'organisme" },
-  { word:"INTERFEROMETRE",  cat:"Sciences",      hint:"Instrument mesurant les interférences lumineuses" },
-  { word:"JURISPRUDENCE",   cat:"Droit",         hint:"Ensemble des décisions de justice" },
-  { word:"KLEPTOCRATIE",    cat:"Politique",     hint:"Gouvernement de dirigeants corrompus" },
-  { word:"LEXICOGRAPHIE",   cat:"Langage",       hint:"Science de la rédaction des dictionnaires" },
-  { word:"LITHOSPHERE",     cat:"Nature",        hint:"Couche solide externe de la Terre" },
-  { word:"MACROECONOMIE",   cat:"Économie",      hint:"Étude de l'économie à grande échelle" },
-  { word:"METAMORPHIQUE",   cat:"Nature",        hint:"Roche transformée par chaleur et pression" }
+  { word:"ANTHROPOLOGIE",  cat:"Sciences",    hint:"Étude de l'être humain et des sociétés" },
+  { word:"ASTROPHYSIQUE",  cat:"Espace",      hint:"Physique appliquée aux astres" },
+  { word:"BACTERIOPHAGE",  cat:"Sciences",    hint:"Virus qui détruit les bactéries" },
+  { word:"BIOGEOGRAPHIE",  cat:"Sciences",    hint:"Répartition des êtres vivants sur Terre" },
+  { word:"BUREAUCRATIE",   cat:"Politique",   hint:"Excès de formalités administratives" },
+  { word:"CARTILAGINEUX",  cat:"Anatomie",    hint:"Constitué de cartilage, pas d'os" },
+  { word:"CATASTROPHISME", cat:"Sciences",    hint:"Théorie des grands bouleversements soudains" },
+  { word:"CHLOROPHYLLE",   cat:"Sciences",    hint:"Pigment vert des plantes" },
+  { word:"CINEMATOGRAPHIE",cat:"Art",         hint:"Technique de fabrication des films" },
+  { word:"CIRCUMPOLAIRE",  cat:"Géographie",  hint:"Qui tourne autour d'un pôle" },
+  { word:"CLEPTOMANIE",    cat:"Médecine",    hint:"Impulsion irrésistible à voler" },
+  { word:"CRYPTOGRAPHIE",  cat:"Technologie", hint:"Art de coder les messages secrets" },
+  { word:"CYTOPLASME",     cat:"Sciences",    hint:"Substance qui remplit les cellules" },
+  { word:"DENDROLOGIE",    cat:"Sciences",    hint:"Étude scientifique des arbres" },
+  { word:"DIALECTIQUE",    cat:"Philosophie", hint:"Art du raisonnement par opposés" },
+  { word:"ELECTROLYSE",    cat:"Sciences",    hint:"Décomposition par courant électrique" },
+  { word:"EMBRYOLOGIE",    cat:"Sciences",    hint:"Étude du développement de l'embryon" },
+  { word:"ENDOCRINOLOGIE", cat:"Médecine",    hint:"Étude des glandes et hormones" },
+  { word:"ENTOMOLOGIE",    cat:"Sciences",    hint:"Étude scientifique des insectes" },
+  { word:"EPISTEMOLOGIE",  cat:"Philosophie", hint:"Étude des fondements de la connaissance" },
+  { word:"ETHNOGRAPHIE",   cat:"Sciences",    hint:"Description des peuples et cultures" },
+  { word:"EXOBIOLOGIE",    cat:"Espace",      hint:"Recherche de vie extraterrestre" },
+  { word:"GEOSTATIONNAIRE",cat:"Espace",      hint:"Satellite fixe au-dessus d'un point" },
+  { word:"GEOTHERMIQUE",   cat:"Nature",      hint:"Énergie tirée de la chaleur terrestre" },
+  { word:"HERMENEUTIQUE",  cat:"Philosophie", hint:"Art d'interpréter les textes anciens" },
+  { word:"HYDROPONIQUE",   cat:"Sciences",    hint:"Culture de plantes sans terre" },
+  { word:"HYPOCONDRIAQUE", cat:"Médecine",    hint:"Obsédé par la crainte d'être malade" },
+  { word:"ICHTYOSAURE",    cat:"Histoire",    hint:"Reptile marin de l'ère secondaire" },
+  { word:"IMMUNOLOGIQUE",  cat:"Médecine",    hint:"Relatif aux défenses de l'organisme" },
+  { word:"JURISPRUDENCE",  cat:"Droit",       hint:"Ensemble des décisions de justice" },
+  { word:"LEXICOGRAPHIE",  cat:"Langage",     hint:"Science de la rédaction des dictionnaires" },
+  { word:"LITHOSPHERE",    cat:"Nature",      hint:"Couche solide externe de la Terre" },
+  { word:"MACROECONOMIE",  cat:"Économie",    hint:"Étude de l'économie à grande échelle" },
+  { word:"METAMORPHIQUE",  cat:"Nature",      hint:"Roche transformée par chaleur et pression" },
+  { word:"KLEPTOCRATIE",   cat:"Politique",   hint:"Gouvernement de dirigeants corrompus" },
+  { word:"COSMOLOGIQUE",   cat:"Espace",      hint:"Relatif à l'origine de l'univers" },
+  { word:"CALVINISME",     cat:"Religion",    hint:"Courant protestant fondé par Calvin" },
+  { word:"INTERFEROMETRE", cat:"Sciences",    hint:"Instrument mesurant les interférences lumineuses" },
+  { word:"HISTOLOGIQUE",   cat:"Médecine",    hint:"Relatif à l'étude des tissus vivants" },
+  { word:"NEUROPLASTICITE",cat:"Médecine",    hint:"Capacité du cerveau à se remodeler" }
 ];
 
 // ═══════════════════════════════════════════════════════
-//  ÉTAT DU MENU
+//  MENU
 // ═══════════════════════════════════════════════════════
 let currentDiff  = 'easy';
 let hintsEnabled = true;
@@ -660,36 +397,25 @@ let hintsEnabled = true;
 function setDiff(d) {
   currentDiff = d;
   ['easy','normal','hard'].forEach(function(x) {
-    const btn = document.getElementById('btn-' + x);
-    btn.className = 'diff-btn' + (x === d ? ' active-' + x : '');
+    document.getElementById('btn-'+x).className = 'diff-btn' + (x===d ? ' active-'+x : '');
   });
 }
 
 function toggleHints() {
   hintsEnabled = !hintsEnabled;
-  const sw = document.getElementById('hint-switch');
-  sw.className = 'toggle-switch' + (hintsEnabled ? ' on' : '');
+  document.getElementById('hint-switch').className = 'toggle-switch' + (hintsEnabled ? ' on' : '');
 }
 
 function startGame() {
-  // Met à jour le badge de difficulté dans le jeu
   const badge = document.getElementById('diff-badge');
   const labels = { easy:'Facile', normal:'Normal', hard:'Difficile' };
   badge.textContent = labels[currentDiff];
   badge.className   = 'diff-badge ' + currentDiff;
-
-  // Choisit la liste de mots
   if      (currentDiff === 'easy')   pickWord = makeQueue(WORDS_EASY);
   else if (currentDiff === 'normal') pickWord = makeQueue(WORDS_NORMAL);
   else                               pickWord = makeQueue(WORDS_HARD);
-
-  // Passe à l'écran jeu
   document.getElementById('menu-screen').classList.add('hidden');
-
-  // Bascule la musique sur les pistes du jeu
   switchToGameMusic();
-
-  // Lance la première partie
   S = 0; winsCount = 0;
   document.getElementById('score').textContent = '0';
   newGame();
@@ -699,6 +425,8 @@ function goToMenu() {
   stopMotSfx();
   document.getElementById('overlay').classList.add('hidden');
   document.getElementById('menu-screen').classList.remove('hidden');
+  var hs = parseInt(localStorage.getItem('pendu-hs') || '0');
+  document.getElementById('hs-display').textContent = hs;
   switchToMenuMusic();
 }
 
@@ -706,26 +434,18 @@ function goToMenu() {
 //  FILES MÉLANGÉES
 // ═══════════════════════════════════════════════════════
 function shuffle(a) {
-  const b = [...a];
-  for (let i = b.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
-  return b;
+  const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b;
 }
 function makeQueue(arr) {
-  let q = [];
-  return function() { if (!q.length) q = shuffle(arr); return q.shift(); };
+  let q=[]; return function(){ if(!q.length) q=shuffle(arr); return q.shift(); };
 }
-
 let pickWord = makeQueue(WORDS_EASY);
-const pickImg  = makeQueue([1,2,3,4,5,6]);
-const pickVid  = makeQueue([1,2,3,4,5,6]);
 
 // ═══════════════════════════════════════════════════════
 //  ÉTAT DU JEU
 // ═══════════════════════════════════════════════════════
 let W, H, C, G, E, O;
-let S = 0;
-let winsCount = 0;
-
+let S = 0, winsCount = 0;
 const ROWS  = [['A','Z','E','R','T','Y','U','I','O','P'],['Q','S','D','F','G','H','J','K','L','M'],['W','X','C','V','B','N']];
 const PARTS = ['p-head','p-body','p-larm','p-rarm','p-lleg','p-rleg'];
 const MAX   = 6;
@@ -736,11 +456,9 @@ const MAX   = 6;
 function newGame() {
   stopMotSfx();
   const e = pickWord();
-  W = e.word.toUpperCase(); H = e.hint; C = e.cat;
-  G = new Set(); E = 0; O = false;
+  W=e.word.toUpperCase(); H=e.hint; C=e.cat;
+  G=new Set(); E=0; O=false;
   document.getElementById('overlay').classList.add('hidden');
-  document.getElementById('img-btn').classList.add('hidden');
-  document.getElementById('vid-btn').classList.add('hidden');
   render();
 }
 
@@ -750,24 +468,21 @@ function guess(l) {
   if (!W.includes(l)) E++;
   if ([...W].every(x => G.has(x))) {
     S += Math.max(10, 50-E*8);
-    O = true;
-    winsCount++;
+    var hs = parseInt(localStorage.getItem('pendu-hs') || '0');
+    if (S > hs) localStorage.setItem('pendu-hs', S);
+    O=true; winsCount++;
     setTimeout(function(){ end(true); }, 400);
   } else if (E >= MAX) {
-    O = true;
+    O=true;
     setTimeout(function(){ end(false); }, 400);
   }
   render();
 }
 
-
 function stopMotSfx() {
-  if (window.motSfx) {
-    window.motSfx.pause();
-    window.motSfx.currentTime = 0;
-    window.motSfx = null;
-  }
+  if (window.motSfx) { window.motSfx.pause(); window.motSfx.currentTime=0; window.motSfx=null; }
 }
+
 function end(won) {
   document.getElementById('overlay-emoji').textContent = won ? '🎉' : '💀';
   const t = document.getElementById('overlay-title');
@@ -777,26 +492,14 @@ function end(won) {
     ? 'Score\u00A0: <span>+' + Math.max(10,50-E*8) + ' pts</span>'
     : 'Le mot\u00A0était\u00A0: <span>' + W + '</span>';
 
-  // Réinitialiser le GIF (caché par défaut)
-  document.getElementById('motmagique-gif').classList.add('hidden');
-
-  if (won && winsCount % 2 === 0) document.getElementById('img-btn').classList.remove('hidden');
+  const gif = document.getElementById('motmagique-gif');
+  gif.classList.add('hidden');
+  gif.src = '';
 
   if (!won) {
-    document.getElementById('vid-btn').classList.remove('hidden');
-
-    // Couper la musique de fond
-    if (window.soundOn && window.player) {
-      window.player.pause();
-    }
-
-    // Afficher le GIF (le recharger pour relancer l'animation)
-    const gif = document.getElementById('motmagique-gif');
-    gif.src = '';
+    if (window.soundOn && window.player) window.player.pause();
     gif.src = 'Motmagique.gif';
     gif.classList.remove('hidden');
-
-    // Jouer Motmagique.mp3 en boucle
     try {
       if (window.motSfx) { window.motSfx.pause(); window.motSfx.currentTime = 0; }
       window.motSfx = new Audio('Motmagique.mp3');
@@ -811,90 +514,40 @@ function end(won) {
 function render() {
   document.getElementById('category-label').textContent = C;
   document.getElementById('score').textContent = S;
-
-  // Indice : uniquement si hintsEnabled ET au moins 2 erreurs
-  document.getElementById('hint-row').textContent = (hintsEnabled && E >= 2) ? '💡 ' + H : '';
-
-  PARTS.forEach(function(id,i){ document.getElementById(id).style.opacity = E > i ? '1' : '0'; });
-
+  document.getElementById('hint-row').textContent = (hintsEnabled && E>=2) ? '💡 '+H : '';
+  PARTS.forEach(function(id,i){ document.getElementById(id).style.opacity = E>i?'1':'0'; });
   const bar = document.getElementById('attempts-bar');
-  bar.innerHTML = '';
-  for (let i = 0; i < MAX; i++) {
-    const d = document.createElement('div');
-    d.className = 'attempt-dot' + (i < E ? ' used' : '');
-    bar.appendChild(d);
-  }
-
+  bar.innerHTML='';
+  for(let i=0;i<MAX;i++){const d=document.createElement('div');d.className='attempt-dot'+(i<E?' used':'');bar.appendChild(d);}
   const wd = document.getElementById('word-display');
-  wd.innerHTML = '';
-  wd.className = 'word-display' + (W.length >= 9 ? ' long' : W.length >= 7 ? ' medium' : '');
-  for (const l of W) {
-    const s  = document.createElement('div'); s.className = 'letter-slot';
-    const ch = document.createElement('div'); ch.className = 'letter-char';
-    if      (G.has(l)) { ch.textContent = l; ch.classList.add('revealed'); }
-    else if (O)        { ch.textContent = l; ch.classList.add('wrong'); }
-    else               { ch.textContent = '\u00A0'; }
-    const ln = document.createElement('div');
-    ln.className = 'letter-line' + (G.has(l) ? ' revealed' : '');
-    s.appendChild(ch); s.appendChild(ln); wd.appendChild(s);
+  wd.innerHTML='';
+  wd.className='word-display'+(W.length>=9?' long':W.length>=7?' medium':'');
+  for(const l of W){
+    const s=document.createElement('div');s.className='letter-slot';
+    const ch=document.createElement('div');ch.className='letter-char';
+    if(G.has(l)){ch.textContent=l;ch.classList.add('revealed');}
+    else if(O){ch.textContent=l;ch.classList.add('wrong');}
+    else{ch.textContent='\u00A0';}
+    const ln=document.createElement('div');ln.className='letter-line'+(G.has(l)?' revealed':'');
+    s.appendChild(ch);s.appendChild(ln);wd.appendChild(s);
   }
-
-  const kb = document.getElementById('keyboard');
-  kb.innerHTML = '';
-  for (const row of ROWS) {
-    const r = document.createElement('div'); r.className = 'key-row';
-    for (const l of row) {
-      const b = document.createElement('button'); b.className = 'key'; b.textContent = l;
-      if      (G.has(l))  { b.classList.add(W.includes(l) ? 'correct' : 'wrong'); b.disabled = true; }
-      else if (O)         { b.disabled = true; }
-      else                { b.addEventListener('click', function(){ guess(l); }); }
+  const kb=document.getElementById('keyboard');
+  kb.innerHTML='';
+  for(const row of ROWS){
+    const r=document.createElement('div');r.className='key-row';
+    for(const l of row){
+      const b=document.createElement('button');b.className='key';b.textContent=l;
+      if(G.has(l)){b.classList.add(W.includes(l)?'correct':'wrong');b.disabled=true;}
+      else if(O){b.disabled=true;}
+      else{b.addEventListener('click',function(){guess(l);});}
       r.appendChild(b);
     }
     kb.appendChild(r);
   }
 }
 
-// ═══════════════════════════════════════════════════════
-//  BOUTONS OVERLAY
-// ═══════════════════════════════════════════════════════
 document.getElementById('play-again-btn').addEventListener('click', newGame);
 document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); if(/^[A-Z]$/.test(l)) guess(l); });
-
-document.getElementById('img-btn').addEventListener('click', function() {
-  const n = pickImg();
-  const imgEl = document.getElementById('img-el');
-  const viewer = document.getElementById('img-viewer');
-  imgEl.onload  = function() { viewer.classList.remove('hidden'); };
-  imgEl.onerror = function() { viewer.classList.remove('hidden'); };
-  imgEl.src = 'img/' + n + '.jpg';
-});
-
-function closeImg() {
-  document.getElementById('img-viewer').classList.add('hidden');
-  newGame();
-}
-document.getElementById('img-el').addEventListener('click',    closeImg);
-document.getElementById('img-el').addEventListener('touchend', function(e){ e.preventDefault(); closeImg(); });
-
-document.getElementById('vid-btn').addEventListener('click', function() {
-  const n = pickVid();
-  const vidEl = document.getElementById('vid-el');
-  vidEl.src = 'vid/' + n + '.mp4';
-  vidEl.load();
-  vidEl.play().catch(function(){});
-  document.getElementById('vid-viewer').classList.remove('hidden');
-});
-
-function closeVid() {
-  const vidEl = document.getElementById('vid-el');
-  vidEl.pause();
-  vidEl.src = '';
-  vidEl.load();
-  document.getElementById('vid-viewer').classList.add('hidden');
-  newGame();
-}
-document.getElementById('vid-el').addEventListener('click',    closeVid);
-document.getElementById('vid-el').addEventListener('touchend', function(e){ e.preventDefault(); closeVid(); });
 
 // ═══════════════════════════════════════════════════════
 //  AUDIO
@@ -902,74 +555,62 @@ document.getElementById('vid-el').addEventListener('touchend', function(e){ e.pr
 (function() {
   const menuTrack  = 'menu.mp3';
   const gameTracks = ['01.mp3','02.mp3','03.mp3'];
-  let idx = 0, mode = 'menu';
+  let idx=0, mode='menu';
   window.soundOn = false;
-  window.player = new Audio();
+  window.player  = new Audio();
   var soundOn = window.soundOn;
-  var player = window.player;
+  var player  = window.player;
   player.preload = 'none';
 
-  // Fin de piste → suivante automatique
   player.addEventListener('ended', function() {
     if (!soundOn) return;
-    if (mode === 'game') {
-      idx = (idx + 1) % gameTracks.length;
-    }
-    // menu : relance la même, jeu : piste suivante
+    if (mode==='game') idx=(idx+1)%gameTracks.length;
     startPlay();
   });
 
   function startPlay() {
-    var src = (mode === 'menu') ? menuTrack : gameTracks[idx];
-    player.src = src;
-    player.load();
-    player.play().catch(function(){});
+    var src = (mode==='menu') ? menuTrack : gameTracks[idx];
+    player.src=src; player.load(); player.play().catch(function(){});
   }
 
   function updateBtns() {
     var label = soundOn ? '🔊 Son ON' : '🔇 Son OFF';
-    var mb = document.getElementById('menu-sound-btn');
-    var gb = document.getElementById('game-sound-btn');
-    if (mb) mb.textContent = label;
-    if (gb) gb.textContent = label;
+    var mb=document.getElementById('menu-sound-btn');
+    var gb=document.getElementById('game-sound-btn');
+    if(mb) mb.textContent=label;
+    if(gb) gb.textContent=label;
   }
 
-  // Bouton son (menu ET jeu)
   window.toggleSound = function() {
-    soundOn = !soundOn;
-    window.soundOn = soundOn;
-    if (soundOn) {
-      startPlay();
-    } else {
-      player.pause();
-      player.src = '';
-    }
+    soundOn=!soundOn; window.soundOn=soundOn;
+    if(soundOn){ startPlay(); } else { player.pause(); player.src=''; }
     updateBtns();
   };
 
-  // Clic JOUER → passe en mode jeu
   window.switchToGameMusic = function() {
-    mode = 'game'; idx = 0;
-    player.pause(); player.src = '';
-    if (soundOn) startPlay();
+    mode='game'; idx=0; player.pause(); player.src='';
+    if(soundOn) startPlay();
   };
 
-  // Retour menu → passe en mode menu
   window.switchToMenuMusic = function() {
-    mode = 'menu';
-    player.pause(); player.src = '';
-    if (soundOn) startPlay();
+    mode='menu'; player.pause(); player.src='';
+    if(soundOn) startPlay();
   };
 
-  // Bouton Next (jeu uniquement)
   window.nextTrack = function() {
-    if (mode !== 'game') return;
-    idx = (idx + 1) % gameTracks.length;
-    player.pause(); player.src = '';
-    if (soundOn) startPlay();
+    if(mode!=='game') return;
+    idx=(idx+1)%gameTracks.length; player.pause(); player.src='';
+    if(soundOn) startPlay();
   };
 
   updateBtns();
+})();
+
+// High score au chargement
+(function(){
+  var hs=parseInt(localStorage.getItem('pendu-hs')||'0');
+  var el=document.getElementById('hs-display');
+  if(el) el.textContent=hs;
 })();
 </script>
 
