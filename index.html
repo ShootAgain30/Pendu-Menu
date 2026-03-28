@@ -58,6 +58,19 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
 .menu-sound-btn { background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35); color:#e8ff47; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; padding:7px 20px; border-radius:100px; cursor:pointer; transition:all 0.2s; margin-top:10px; position:relative; z-index:1; }
 .menu-sound-btn:active { transform:scale(0.95); }
 
+/* Bouton installation PWA */
+.install-btn {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 999;
+  background: var(--accent); color: var(--bg);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem; letter-spacing: 0.15em;
+  padding: 10px 28px; border-radius: 100px; border: none;
+  cursor: pointer; box-shadow: 0 0 30px rgba(232,255,71,0.5);
+  animation: playPulse 2s ease-in-out infinite;
+  display: none;
+}
+
 /* ── JEU ── */
 .app { position:relative; z-index:1; height:100dvh; display:flex; flex-direction:column; align-items:center; padding:8px 12px 4px; max-width:480px; margin:0 auto; }
 .header { width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; flex-shrink:0; }
@@ -618,7 +631,32 @@ document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); i
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(function(){});
 }
+
+// ── Installation PWA ──
+var deferredPrompt = null;
+var installBtn = document.getElementById('install-btn');
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
+});
+
+installBtn.addEventListener('click', function() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function() {
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+  });
+});
+
+window.addEventListener('appinstalled', function() {
+  installBtn.style.display = 'none';
+  deferredPrompt = null;
+});
 </script>
+<button class="install-btn" id="install-btn">📲 Installer le jeu</button>
 <div class="signature">Développé par Bernard V <span id="app-version"></span></div>
 </body>
 </html>
