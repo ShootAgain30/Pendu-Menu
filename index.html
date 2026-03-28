@@ -659,7 +659,7 @@ document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); i
 // ═══════════════════════════════════════════════════════
 (function() {
   // Si déjà validé dans cette session, passer directement au menu
-  if (sessionStorage.getItem('pendu-access') === 'ok') {
+  if (localStorage.getItem('pendu-access') === 'ok') {
     document.getElementById('code-screen').classList.add('hidden');
     document.getElementById('menu-screen').classList.remove('hidden');
   }
