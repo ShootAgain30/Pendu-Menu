@@ -253,6 +253,14 @@ body::before {
 .key.correct { background:rgba(232,255,71,0.12); border-color:var(--accent); color:var(--accent); cursor:default; }
 .key.wrong   { background:rgba(255,71,87,0.08);  border-color:rgba(255,71,87,0.3); color:var(--accent2); cursor:default; opacity:0.5; }
 
+.motmagique-gif {
+  width: 220px;
+  max-width: 80vw;
+  border-radius: 8px;
+  animation: bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.motmagique-gif.hidden { display: none; }
+
 .overlay {
   position:fixed; inset:0; background:rgba(15,12,26,0.93);
   backdrop-filter:blur(12px);
@@ -445,6 +453,7 @@ body::before {
 
 
 <div class="overlay hidden" id="overlay">
+  <img id="motmagique-gif" src="Motmagique.gif" class="motmagique-gif hidden" alt="">
   <div class="overlay-emoji" id="overlay-emoji"></div>
   <div class="overlay-title" id="overlay-title"></div>
   <div class="overlay-word"  id="overlay-word"></div>
@@ -678,9 +687,26 @@ function end(won) {
     ? 'Score\u00A0: <span>+' + Math.max(10,50-E*8) + ' pts</span>'
     : 'Le mot\u00A0était\u00A0: <span>' + W + '</span>';
 
+  // Réinitialiser le GIF (caché par défaut)
+  document.getElementById('motmagique-gif').classList.add('hidden');
+
   if (won && winsCount % 2 === 0) document.getElementById('img-btn').classList.remove('hidden');
+
   if (!won) {
     document.getElementById('vid-btn').classList.remove('hidden');
+
+    // Couper la musique de fond
+    if (window.soundOn && window.player) {
+      window.player.pause();
+    }
+
+    // Afficher le GIF (le recharger pour relancer l'animation)
+    const gif = document.getElementById('motmagique-gif');
+    gif.src = '';
+    gif.src = 'Motmagique.gif';
+    gif.classList.remove('hidden');
+
+    // Jouer Motmagique.mp3
     try {
       const sfx = new Audio('Motmagique.mp3');
       sfx.play().catch(function(){});
@@ -784,8 +810,11 @@ document.getElementById('vid-el').addEventListener('touchend', function(e){ e.pr
 (function() {
   const menuTrack  = 'menu.mp3';
   const gameTracks = ['01.mp3','02.mp3','03.mp3'];
-  let idx = 0, soundOn = false, mode = 'menu';
-  const player = new Audio();
+  let idx = 0, mode = 'menu';
+  window.soundOn = false;
+  window.player = new Audio();
+  var soundOn = window.soundOn;
+  var player = window.player;
   player.preload = 'none';
 
   // Fin de piste → suivante automatique
@@ -816,6 +845,7 @@ document.getElementById('vid-el').addEventListener('touchend', function(e){ e.pr
   // Bouton son (menu ET jeu)
   window.toggleSound = function() {
     soundOn = !soundOn;
+    window.soundOn = soundOn;
     if (soundOn) {
       startPlay();
     } else {
