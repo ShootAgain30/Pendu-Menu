@@ -1,5 +1,5 @@
 ```js
-const CACHE = 'pendu-v1.0.8';
+const CACHE = 'pendu-v2.0.0';
 
 const FILES = [
   '/',
