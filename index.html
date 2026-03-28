@@ -702,7 +702,17 @@ document.getElementById('code-input').addEventListener('keydown', function(e) {
 });
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(function(){});
+  navigator.serviceWorker.register('./sw.js').then(function() {
+    navigator.serviceWorker.ready.then(function(reg) {
+      reg.active.postMessage('getVersion');
+    });
+  }).catch(function(){});
+
+  navigator.serviceWorker.addEventListener('message', function(e) {
+    var version = e.data.replace('pendu-', '');
+    var el = document.querySelector('.signature span');
+    if (el) el.textContent = version;
+  });
 }
 
 // ── Installation PWA ──
