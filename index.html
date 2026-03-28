@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f0c1a">
+<title>Le Pendu</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  .signature{text-align:right;font-size:3vw;color:#444;font-style:italic;margin-top:2vw;padding-right:1vw}
+:root {
+  --bg: #0f0c1a;
+  --accent: #e8ff47;
+  --accent2: #ff4757;
+  --accent3: #48dbfb;
+  --text: #f0ebff;
+  --muted: rgba(240,235,255,0.35);
+  --card: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Serif Display', serif;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 0%, rgba(232,255,71,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 90% 100%, rgba(72,219,251,0.05) 0%, transparent 60%);
+}
+
+.app {
+  position: relative; z-index: 1;
+  height: 100dvh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 12px 4px;
+  max-width: 480px; margin: 0 auto;
+}
+
+.header {
+  width: 100%; display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 4px; flex-shrink: 0;
+}
+.game-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem;
+  letter-spacing: 0.15em; color: var(--accent);
+  text-shadow: 0 0 30px rgba(232,255,71,0.4); line-height: 1;
+}
+.score-badge { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+.score-label { font-family:'DM Mono',monospace; font-size:0.55rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
+.score-val { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--accent3); letter-spacing:0.1em; line-height:1; }
+
+.category-pill {
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--card); border:1px solid var(--border);
+  padding:4px 14px; border-radius:100px;
+  font-family:'DM Mono',monospace; font-size:1.05rem;
+  color:var(--text); letter-spacing:0.1em; text-transform:uppercase;
+  margin-bottom:4px; flex-shrink:0;
+}
+.cat-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
+
+.gallows-wrap { width:100%; display:flex; justify-content:center; margin-bottom:4px; flex-shrink:0; }
+#gallows-svg { width:180px; height:130px; }
+
+.attempts-bar { display:flex; gap:6px; margin-bottom:6px; flex-shrink:0; }
+.attempt-dot { width:8px; height:8px; border-radius:50%; background:var(--accent2); box-shadow:0 0 8px var(--accent2); transition:all 0.3s; }
+.attempt-dot.used { background:rgba(255,255,255,0.1); box-shadow:none; }
+
+.word-display {
+  display:flex; gap:8px; flex-wrap:nowrap;
+  justify-content:center; align-items:center;
+  width:100%; margin-bottom:6px; min-height:44px; flex-shrink:0;
+}
+.word-display.medium { gap:5px; }
+.word-display.long   { gap:3px; }
+
+.letter-slot { display:flex; flex-direction:column; align-items:center; gap:3px; }
+.letter-char {
+  font-family:'DM Serif Display',serif; font-size:1.7rem;
+  line-height:1; min-width:26px; text-align:center;
+  color:var(--text); transition:all 0.3s; transform-origin:bottom;
+}
+.word-display.medium .letter-char { font-size:1.35rem; min-width:21px; }
+.word-display.long   .letter-char { font-size:1.05rem; min-width:16px; }
+.letter-char.revealed { animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); color:var(--accent); }
+.letter-char.wrong    { color:var(--accent2); animation:shake 0.4s ease; }
+
+@keyframes popIn { 0%{transform:scale(0) rotateX(90deg);opacity:0} 100%{transform:scale(1) rotateX(0);opacity:1} }
+@keyframes shake  { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
+.letter-line { height:2px; background:rgba(255,255,255,0.2); border-radius:1px; width:26px; }
+.word-display.medium .letter-line { width:21px; }
+.word-display.long   .letter-line { width:16px; }
+.letter-line.revealed { background:var(--accent); box-shadow:0 0 6px var(--accent); }
+
+.hint-row {
+  font-family:'DM Mono',monospace; font-size:1.05rem;
+  color:var(--accent3); letter-spacing:0.06em;
+  margin-bottom:6px; text-align:center; min-height:20px;
+  font-weight:500; flex-shrink:0; padding:0 4px;
+}
+
+.keyboard { width:100%; display:flex; flex-direction:column; gap:5px; flex-shrink:0; }
+.key-row { display:flex; justify-content:center; gap:4px; }
+.key {
+  background:var(--card); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Mono',monospace;
+  font-size:0.8rem; font-weight:500;
+  width:34px; height:40px; border-radius:6px;
+  cursor:pointer; transition:all 0.15s;
+  display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+  -webkit-user-select:none; user-select:none;
+}
+.key::after { content:''; position:absolute; inset:0; background:var(--accent); opacity:0; transition:opacity 0.1s; }
+.key:active::after { opacity:0.15; }
+.key:not([disabled]):hover { border-color:rgba(232,255,71,0.4); color:var(--accent); transform:translateY(-1px); }
+.key.correct { background:rgba(232,255,71,0.12); border-color:var(--accent); color:var(--accent); cursor:default; }
+.key.wrong   { background:rgba(255,71,87,0.08);  border-color:rgba(255,71,87,0.3); color:var(--accent2); cursor:default; opacity:0.5; }
+
+.overlay {
+  position:fixed; inset:0; background:rgba(15,12,26,0.93);
+  backdrop-filter:blur(12px);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:50; gap:20px; padding:32px; text-align:center; transition:opacity 0.4s;
+}
+.overlay.hidden { opacity:0; pointer-events:none; }
+.overlay-emoji { font-size:4rem; animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes bounceIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+.overlay-title { font-family:'Bebas Neue',sans-serif; font-size:3rem; letter-spacing:0.1em; line-height:1; }
+.overlay-title.win  { color:var(--accent);  text-shadow:0 0 40px rgba(232,255,71,0.5); }
+.overlay-title.lose { color:var(--accent2); text-shadow:0 0 40px rgba(255,71,87,0.5); }
+.overlay-word { font-family:'DM Serif Display',serif; font-style:italic; font-size:1.4rem; color:var(--muted); }
+.overlay-word span { color:var(--text); font-style:normal; }
+.play-again-btn {
+  background:var(--accent); color:var(--bg); border:none;
+  padding:14px 40px; font-family:'Bebas Neue',sans-serif;
+  font-size:1.4rem; letter-spacing:0.15em; cursor:pointer;
+  border-radius:4px; transition:all 0.2s;
+  box-shadow:0 0 30px rgba(232,255,71,0.3);
+}
+.play-again-btn:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(232,255,71,0.5); }
+
+/* Bouton image / vidéo dans l'overlay */
+.bonus-btn {
+  background: transparent;
+  border: 2px solid var(--accent3);
+  color: var(--accent3);
+  padding: 10px 30px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem; letter-spacing: 0.15em;
+  cursor: pointer; border-radius: 4px; transition: all 0.2s;
+}
+.bonus-btn:hover { background: rgba(72,219,251,0.1); }
+.bonus-btn.hidden { display:none; }
+
+/* Visionneuse plein écran image / vidéo */
+.viewer {
+  position:fixed; inset:0; background:#000;
+  display:flex; align-items:center; justify-content:center;
+  z-index:100;
+}
+.viewer.hidden { display:none; }
+.viewer img, .viewer video {
+  max-width:100%; max-height:100%;
+  object-fit:contain; cursor:pointer;
+}
+
+.audio-btn {
+  position:fixed; right:14px; z-index:99;
+  background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35);
+  color:#e8ff47; font-family:'DM Mono',monospace;
+  font-size:0.65rem; letter-spacing:0.1em;
+  padding:7px 12px; border-radius:100px;
+  cursor:pointer; transition:all 0.2s;
+}
+.audio-btn:active { transform:scale(0.95); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="game-title">LE PENDU</div>
+    <div class="score-badge">
+      <span class="score-label">Score</span>
+      <span class="score-val" id="score">0</span>
+    </div>
+  </div>
+
+  <div class="category-pill">
+    <div class="cat-dot"></div>
+    <span id="category-label">—</span>
+  </div>
+
+  <div class="gallows-wrap">
+    <svg id="gallows-svg" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="155" x2="200" y2="155" stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="155" x2="60"  y2="10"  stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="10"  x2="140" y2="10"  stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="140" y1="10" x2="140" y2="30"  stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3"/>
+      <circle id="p-head" cx="140" cy="44" r="14" stroke="#ff4757" stroke-width="2.5" opacity="0" style="transition:opacity 0.4s"/>
+      <line id="p-body" x1="140" y1="58"  x2="140" y2="100" stroke="#ff4757" stroke-width="2.5" stroke-linecap="round" opacity="0" style="transition:opacity 0.4s"/>
+      <line id="p-larm" x1="140" y1="70"  x2="118" y2="90"  stroke="#ff4757" stroke-width="2.5" stroke-linecap="round" opacity="0" style="transition:opacity 0.4s"/>
+      <line id="p-rarm" x1="140" y1="70"  x2="162" y2="90"  stroke="#ff4757" stroke-width="2.5" stroke-linecap="round" opacity="0" style="transition:opacity 0.4s"/>
+      <line id="p-lleg" x1="140" y1="100" x2="118" y2="130" stroke="#ff4757" stroke-width="2.5" stroke-linecap="round" opacity="0" style="transition:opacity 0.4s"/>
+      <line id="p-rleg" x1="140" y1="100" x2="162" y2="130" stroke="#ff4757" stroke-width="2.5" stroke-linecap="round" opacity="0" style="transition:opacity 0.4s"/>
+    </svg>
+  </div>
+
+  <div class="attempts-bar" id="attempts-bar"></div>
+  <div class="word-display"  id="word-display"></div>
+  <div class="hint-row"      id="hint-row"></div>
+  <div class="keyboard"      id="keyboard"></div>
+</div>
+
+<div class="overlay hidden" id="overlay">
+  <div class="overlay-emoji" id="overlay-emoji"></div>
+  <div class="overlay-title" id="overlay-title"></div>
+  <div class="overlay-word"  id="overlay-word"></div>
+  <button class="bonus-btn hidden" id="img-btn">🖼 VOIR L'IMAGE</button>
+  <button class="bonus-btn hidden" id="vid-btn">🎬 VOIR LA VIDÉO</button>
+  <button class="play-again-btn" id="play-again-btn">REJOUER</button>
+</div>
+
+<!-- Visionneuse image -->
+<div class="viewer hidden" id="img-viewer">
+  <img id="img-el" src="" alt="">
+</div>
+
+<!-- Visionneuse vidéo -->
+<div class="viewer hidden" id="vid-viewer">
+  <video id="vid-el" src="" playsinline></video>
+</div>
+
+<button class="audio-btn" id="music-btn" style="bottom:52px">🎵 Musique</button>
+<button class="audio-btn" id="next-btn"  style="bottom:14px">⏭ Next</button>
+
+<script>
+const WORDS = [
+  { word:"ELEPHANT",   cat:"Animaux",      hint:"Le plus grand mammifère terrestre" },
+  { word:"VOLCAN",     cat:"Nature",        hint:"Crache de la lave" },
+  { word:"GUITARE",    cat:"Musique",       hint:"Instrument à cordes pincées" },
+  { word:"PYRAMIDE",   cat:"Histoire",      hint:"Tombeau des pharaons" },
+  { word:"CHOCOLAT",   cat:"Nourriture",    hint:"Fait du cacao" },
+  { word:"DALMATIEN",  cat:"Animaux",       hint:"Chien tacheté de noir" },
+  { word:"FUSEE",      cat:"Espace",        hint:"Va dans les étoiles" },
+  { word:"CROCODILE",  cat:"Animaux",       hint:"Reptile des marais" },
+  { word:"PARACHUTE",  cat:"Sport",         hint:"Ralentit la chute" },
+  { word:"DIAMANT",    cat:"Minéraux",      hint:"La pierre la plus dure" },
+  { word:"AURORE",     cat:"Nature",        hint:"Lumières polaires colorées" },
+  { word:"VAMPIRE",    cat:"Fantastique",   hint:"Craint l'ail et le soleil" },
+  { word:"CERISIER",   cat:"Arbres",        hint:"Fleurit en rose au Japon" },
+  { word:"TORNADE",    cat:"Météo",         hint:"Colonne d'air en rotation" },
+  { word:"SORCIERE",   cat:"Fantastique",   hint:"Chevauche un balai" },
+  { word:"MANCHOT",    cat:"Animaux",       hint:"Pingouin qui ne vole pas" },
+  { word:"TAMBOUR",    cat:"Musique",       hint:"Instrument à percussion" },
+  { word:"REQUIN",     cat:"Animaux",       hint:"Prédateur des océans" },
+  { word:"CHATEAU",    cat:"Architecture",  hint:"Résidence médiévale fortifiée" },
+  { word:"DRAGON",     cat:"Fantastique",   hint:"Crache du feu et vole" },
+  { word:"GIRAFE",     cat:"Animaux",       hint:"A le cou le plus long" },
+  { word:"LICORNE",    cat:"Fantastique",   hint:"Cheval avec une corne magique" },
+  { word:"PIZZA",      cat:"Nourriture",    hint:"Spécialité italienne ronde" },
+  { word:"DAUPHIN",    cat:"Animaux",       hint:"Mammifère marin très intelligent" },
+  { word:"CACTUS",     cat:"Nature",        hint:"Plante du désert avec des épines" },
+  { word:"ASTRONAUTE", cat:"Espace",        hint:"Pilote une navette spatiale" },
+  { word:"BOULANGER",  cat:"Métiers",       hint:"Fabrique le pain chaque matin" },
+  { word:"CASCADE",    cat:"Nature",        hint:"Chute d'eau naturelle" },
+  { word:"DETECTIVE",  cat:"Métiers",       hint:"Résout les mystères et enquêtes" },
+  { word:"ECUREUIL",   cat:"Animaux",       hint:"Grimpe aux arbres et mange des noisettes" },
+  { word:"FANTOME",    cat:"Fantastique",   hint:"Esprit invisible qui hante les maisons" },
+  { word:"GALAXIE",    cat:"Espace",        hint:"Immense groupe d'étoiles" },
+  { word:"HIBOU",      cat:"Animaux",       hint:"Oiseau nocturne qui fait ouhou" },
+  { word:"IGLOO",      cat:"Architecture",  hint:"Maison de glace des Inuits" },
+  { word:"JONGLEUR",   cat:"Spectacle",     hint:"Lance des balles en l'air" },
+  { word:"KOALA",      cat:"Animaux",       hint:"Mange des feuilles d'eucalyptus" },
+  { word:"LAGON",      cat:"Nature",        hint:"Mer calme entourée de coraux" },
+  { word:"MEDUSE",     cat:"Animaux",       hint:"Créature transparente des océans" },
+  { word:"NAUFRAGE",   cat:"Aventure",      hint:"Bateau coulé au fond de la mer" },
+  { word:"OURAGAN",    cat:"Météo",         hint:"Tempête tropicale très violente" },
+  { word:"PINGOUIN",   cat:"Animaux",       hint:"Oiseau noir et blanc qui ne vole pas" },
+  { word:"CAMÉLÉON",      cat:"Animaux",        hint:"Change de couleur pour se camoufler" },
+  { word:"ARCHIPEL",     cat:"Geographie",    hint:"Groupe d'iles rapprochees" },
+  { word:"MARATHON",     cat:"Sport",         hint:"Course de 42 km" },
+  { word:"ALCHIMIE",     cat:"Histoire",      hint:"Ancetre de la chimie, cherche la pierre philosophale" },
+  { word:"SQUELETTE",    cat:"Anatomie",      hint:"Structure osseuse du corps" },
+  { word:"ORIGAMI",      cat:"Art",           hint:"Pliage de papier japonais" },
+  { word:"CRATERE",      cat:"Nature",        hint:"Depression formee par un impact ou un volcan" },
+  { word:"METEORITE",    cat:"Espace",        hint:"Roche venue de l'espace tombee sur Terre" },
+  { word:"LABYRINTHE",   cat:"Aventure",      hint:"Chemin complexe ou l'on se perd facilement" },
+  { word:"PANTHERE",     cat:"Animaux",       hint:"Felin discret souvent noir" },
+  { word:"SYMPHONIE",    cat:"Musique",       hint:"Oeuvre orchestrale en plusieurs mouvements" },
+  { word:"MONASTERE",    cat:"Architecture",  hint:"Lieu de vie pour moines ou moniales" },
+  { word:"TRESOR",       cat:"Aventure",      hint:"Butin cache recherche par les pirates" },
+  { word:"GRENOUILLE",   cat:"Animaux",       hint:"Amphibien qui coasse" },
+  { word:"HORIZON",      cat:"Nature",        hint:"Ligne ou ciel et terre semblent se rejoindre" },
+  { word:"MIRAGE",       cat:"Phenomenes",    hint:"Illusion optique dans le desert" },
+  { word:"PAPYRUS",      cat:"Histoire",      hint:"Ancien support d'ecriture egyptien" },
+  { word:"VORTEX",       cat:"Phenomenes",    hint:"Tourbillon d'air ou d'eau" },
+  { word:"CITADELLE",    cat:"Architecture",  hint:"Fortification protegeant une ville" },
+  { word:"GOUFFRE",      cat:"Nature",        hint:"Trou profond dans le sol" },
+  { word:"NEBULEUSE",    cat:"Espace",        hint:"Nuage cosmique ou naissent les etoiles" },
+  { word:"GLACON",       cat:"Objet",        hint:"Petit cube qui refroidit les boissons" },
+  { word:"FANTASME",     cat:"Concept",      hint:"Imagination ou desir irreel" },
+  { word:"PIRANHA",      cat:"Animaux",      hint:"Petit poisson aux dents tres tranchantes" },
+  { word:"CARAVANE",     cat:"Voyage",       hint:"Maison mobile que l'on tracte" },
+  { word:"MOUSTIQUE",    cat:"Animaux",      hint:"Insecte qui pique et fait du bruit la nuit" }
+    
+];
+
+const ROWS  = [['A','Z','E','R','T','Y','U','I','O','P'],['Q','S','D','F','G','H','J','K','L','M'],['W','X','C','V','B','N']];
+const PARTS = ['p-head','p-body','p-larm','p-rarm','p-lleg','p-rleg'];
+const MAX   = 6;
+
+// ── File mélangée générique ──────────────────────────────────
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
+  return b;
+}
+function makeQueue(arr) {
+  let q = [];
+  return function() { if (!q.length) q = shuffle(arr); return q.shift(); };
+}
+
+// Files de mots, images, vidéos
+const pickWord = makeQueue(WORDS);
+const pickImg  = makeQueue([1,2,3,4,5,6]);
+const pickVid  = makeQueue([1,2,3,4,5,6]);
+
+// ── État ────────────────────────────────────────────────────
+let W, H, C, G, E, S = 0, O;
+let winsCount = 0; // compteur victoires consécutives pour déclencher image
+
+// ── Jeu ─────────────────────────────────────────────────────
+function newGame() {
+  const e = pickWord();
+  W = e.word.toUpperCase(); H = e.hint; C = e.cat;
+  G = new Set(); E = 0; O = false;
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('img-btn').classList.add('hidden');
+  document.getElementById('vid-btn').classList.add('hidden');
+  render();
+}
+
+function guess(l) {
+  if (O || G.has(l)) return;
+  G.add(l);
+  if (!W.includes(l)) E++;
+  if ([...W].every(x => G.has(x))) {
+    S += Math.max(10, 50-E*8);
+    O = true;
+    winsCount++;
+    setTimeout(()=>end(true), 400);
+  } else if (E >= MAX) {
+    O = true;
+    setTimeout(()=>end(false), 400);
+  }
+  render();
+}
+
+function end(won) {
+  document.getElementById('overlay-emoji').textContent = won ? '🎉' : '💀';
+  const t = document.getElementById('overlay-title');
+  t.textContent = won ? 'BRAVO !' : 'PERDU !';
+  t.className = 'overlay-title ' + (won ? 'win' : 'lose');
+  document.getElementById('overlay-word').innerHTML = won
+    ? 'Score\u00A0: <span>+' + Math.max(10,50-E*8) + ' pts</span>'
+    : 'Le mot\u00A0était\u00A0: <span>' + W + '</span>';
+
+  // Bouton image toutes les 2 victoires
+  if (won && winsCount % 2 === 0) {
+    document.getElementById('img-btn').classList.remove('hidden');
+  }
+  // Bouton vidéo à chaque défaite
+  if (!won) {
+    document.getElementById('vid-btn').classList.remove('hidden');
+  }
+
+  document.getElementById('overlay').classList.remove('hidden');
+}
+
+// ── Render ───────────────────────────────────────────────────
+function render() {
+  document.getElementById('category-label').textContent = C;
+  document.getElementById('score').textContent = S;
+  document.getElementById('hint-row').textContent = E >= 2 ? '💡 ' + H : '';
+
+  PARTS.forEach((id,i) => document.getElementById(id).style.opacity = E > i ? '1' : '0');
+
+  const bar = document.getElementById('attempts-bar');
+  bar.innerHTML = '';
+  for (let i = 0; i < MAX; i++) {
+    const d = document.createElement('div');
+    d.className = 'attempt-dot' + (i < E ? ' used' : '');
+    bar.appendChild(d);
+  }
+
+  const wd = document.getElementById('word-display');
+  wd.innerHTML = '';
+  wd.className = 'word-display' + (W.length >= 9 ? ' long' : W.length >= 7 ? ' medium' : '');
+  for (const l of W) {
+    const s  = document.createElement('div'); s.className = 'letter-slot';
+    const ch = document.createElement('div'); ch.className = 'letter-char';
+    if      (G.has(l)) { ch.textContent = l; ch.classList.add('revealed'); }
+    else if (O)        { ch.textContent = l; ch.classList.add('wrong'); }
+    else               { ch.textContent = '\u00A0'; }
+    const ln = document.createElement('div');
+    ln.className = 'letter-line' + (G.has(l) ? ' revealed' : '');
+    s.appendChild(ch); s.appendChild(ln); wd.appendChild(s);
+  }
+
+  const kb = document.getElementById('keyboard');
+  kb.innerHTML = '';
+  for (const row of ROWS) {
+    const r = document.createElement('div'); r.className = 'key-row';
+    for (const l of row) {
+      const b = document.createElement('button'); b.className = 'key'; b.textContent = l;
+      if      (G.has(l))  { b.classList.add(W.includes(l) ? 'correct' : 'wrong'); b.disabled = true; }
+      else if (O)         { b.disabled = true; }
+      else                { b.addEventListener('click', ()=>guess(l)); }
+      r.appendChild(b);
+    }
+    kb.appendChild(r);
+  }
+}
+
+// ── Boutons overlay ──────────────────────────────────────────
+document.getElementById('play-again-btn').addEventListener('click', newGame);
+document.addEventListener('keydown', e => { const l=e.key.toUpperCase(); if(/^[A-Z]$/.test(l)) guess(l); });
+
+// Bouton image
+document.getElementById('img-btn').addEventListener('click', function() {
+  const n = pickImg();
+  const imgEl = document.getElementById('img-el');
+  const viewer = document.getElementById('img-viewer');
+  imgEl.onload  = function() { viewer.classList.remove('hidden'); };
+  imgEl.onerror = function() { viewer.classList.remove('hidden'); };
+  imgEl.src = 'img/' + n + '.jpg';
+});
+
+// Clic/touch sur image → ferme et reprend
+function closeImg() {
+  document.getElementById('img-viewer').classList.add('hidden');
+  newGame();
+}
+document.getElementById('img-el').addEventListener('click',    closeImg);
+document.getElementById('img-el').addEventListener('touchend', function(e){ e.preventDefault(); closeImg(); });
+
+// Bouton vidéo
+document.getElementById('vid-btn').addEventListener('click', function() {
+  const n = pickVid();
+  const vidEl = document.getElementById('vid-el');
+  vidEl.src = 'vid/' + n + '.mp4';
+  vidEl.load();
+  vidEl.play().catch(()=>{});
+  document.getElementById('vid-viewer').classList.remove('hidden');
+});
+
+// Clic/touch sur vidéo → stop + ferme + reprend
+function closeVid() {
+  const vidEl = document.getElementById('vid-el');
+  vidEl.pause();
+  vidEl.src = '';
+  vidEl.load();
+  document.getElementById('vid-viewer').classList.add('hidden');
+  newGame();
+}
+document.getElementById('vid-el').addEventListener('click',    closeVid);
+document.getElementById('vid-el').addEventListener('touchend', function(e){ e.preventDefault(); closeVid(); });
+
+// ── Démarrage ────────────────────────────────────────────────
+newGame();
+
+// ── Audio ────────────────────────────────────────────────────
+(function() {
+  try {
+    const tracks = ['01.mp3','02.mp3','03.mp3'];
+    let idx = 0, on = false;
+    const a = new Audio();
+    a.preload = 'none';
+
+    a.addEventListener('ended', function() {
+      idx = (idx+1) % tracks.length;
+      a.src = tracks[idx];
+      a.load();
+      a.addEventListener('canplaythrough', function h() {
+        a.removeEventListener('canplaythrough', h);
+        if (on) a.play().catch(()=>{});
+      });
+    });
+
+    const mb = document.getElementById('music-btn');
+    const nb = document.getElementById('next-btn');
+
+    mb.addEventListener('click', function() {
+      if (a.paused) {
+        a.src = tracks[idx];
+        a.load();
+        a.play().then(function() { on=true; mb.textContent='🔇 Stop'; }).catch(()=>{});
+      } else {
+        a.pause(); on=false; mb.textContent='🎵 Musique';
+      }
+    });
+
+    nb.addEventListener('click', function() {
+      idx = (idx+1) % tracks.length;
+      a.src = tracks[idx]; a.load();
+      if (on) a.play().catch(()=>{});
+    });
+
+  } catch(err) {
+    document.getElementById('music-btn').style.display='none';
+    document.getElementById('next-btn').style.display='none';
+  }
+})();
+</script>
+  <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(function(){});
+}
+</script>
+  <div class="signature">Développé par Bernard V <span id="app-version"></span></div>
+</body>
+</html>
