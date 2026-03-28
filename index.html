@@ -678,7 +678,7 @@ window.validerCode = function() {
 
   if (CODES_VALIDES.indexOf(code) !== -1) {
     // Code valide
-    sessionStorage.setItem('pendu-access', 'ok');
+    localStorage.setItem('pendu-access', 'ok');
     document.getElementById('code-screen').classList.add('hidden');
     document.getElementById('menu-screen').classList.remove('hidden');
     // Afficher le high score
@@ -710,7 +710,7 @@ if ('serviceWorker' in navigator) {
 
   navigator.serviceWorker.addEventListener('message', function(e) {
     var version = e.data.replace('pendu-', '');
-    var el = document.querySelector('.signature span');
+    var el = document.getElementById('version-display');
     if (el) el.textContent = version;
   });
 }
@@ -740,6 +740,6 @@ window.addEventListener('appinstalled', function() {
 });
 </script>
 <button class="install-btn" id="install-btn">📲 Installer le jeu</button>
-<div class="signature">Développé par Bernard V — <span style="color:var(--accent3)">v1.1.3</span></div>
+<div class="signature">Développé par Bernard V — <span id="version-display" style="color:var(--accent3)">v1.1.5</span></div>
 </body>
 </html>
