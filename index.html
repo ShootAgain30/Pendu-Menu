@@ -32,9 +32,11 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
 .code-logo { font-family:'Bebas Neue',sans-serif; font-size:clamp(3rem,15vw,4.5rem); letter-spacing:0.18em; color:var(--accent); text-shadow:0 0 60px rgba(232,255,71,0.35); line-height:1; text-align:center; margin-bottom:8px; }
 .code-subtitle { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:40px; text-align:center; }
 .code-input-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; width:100%; max-width:280px; }
-.code-input { background:var(--card); border:2px solid var(--border); color:var(--text); font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.1em; text-align:center; width:100%; padding:16px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; }
+.code-input { background:var(--card); border:2px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:1.4rem; letter-spacing:0.1em; text-align:center; width:100%; padding:16px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; }
 .code-input:focus { border-color:var(--accent); }
 .code-input.error { border-color:var(--accent2); animation:shake 0.4s ease; }
+#code-prenom { text-transform:capitalize; }
+#code-tel { letter-spacing:0.2em; }
 .code-error { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--accent2); letter-spacing:0.1em; min-height:20px; text-align:center; }
 .code-submit { background:var(--accent); color:var(--bg); border:none; padding:14px 50px; font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.2em; cursor:pointer; border-radius:6px; transition:all 0.2s; box-shadow:0 0 30px rgba(232,255,71,0.3); width:100%; }
 .code-submit:active { transform:scale(0.97); }
@@ -254,9 +256,6 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  LISTES DE MOTS
-// ═══════════════════════════════════════════════════════
 const WORDS_EASY = [
   { word:"ELEPHANT",   cat:"Animaux",      hint:"Le plus grand mammifère terrestre" },
   { word:"VOLCAN",     cat:"Nature",       hint:"Crache de la lave" },
@@ -428,9 +427,6 @@ const WORDS_HARD = [
   { word:"NEUROPLASTICITE",cat:"Médecine",    hint:"Capacité du cerveau à se remodeler" }
 ];
 
-// ═══════════════════════════════════════════════════════
-//  MENU
-// ═══════════════════════════════════════════════════════
 let currentDiff  = 'easy';
 let hintsEnabled = true;
 
@@ -470,9 +466,6 @@ function goToMenu() {
   switchToMenuMusic();
 }
 
-// ═══════════════════════════════════════════════════════
-//  FILES MÉLANGÉES
-// ═══════════════════════════════════════════════════════
 function shuffle(a) {
   const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b;
 }
@@ -481,18 +474,12 @@ function makeQueue(arr) {
 }
 let pickWord = makeQueue(WORDS_EASY);
 
-// ═══════════════════════════════════════════════════════
-//  ÉTAT DU JEU
-// ═══════════════════════════════════════════════════════
 let W, H, C, G, E, O;
 let S = 0, winsCount = 0;
 const ROWS  = [['A','Z','E','R','T','Y','U','I','O','P'],['Q','S','D','F','G','H','J','K','L','M'],['W','X','C','V','B','N']];
 const PARTS = ['p-head','p-body','p-larm','p-rarm','p-lleg','p-rleg'];
 const MAX   = 6;
 
-// ═══════════════════════════════════════════════════════
-//  LOGIQUE DU JEU
-// ═══════════════════════════════════════════════════════
 function newGame() {
   stopMotSfx();
   const e = pickWord();
@@ -589,9 +576,6 @@ function render() {
 document.getElementById('play-again-btn').addEventListener('click', newGame);
 document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); if(/^[A-Z]$/.test(l)) guess(l); });
 
-// ═══════════════════════════════════════════════════════
-//  AUDIO
-// ═══════════════════════════════════════════════════════
 (function() {
   const menuTrack  = 'menu.mp3';
   const gameTracks = ['01.mp3','02.mp3','03.mp3'];
@@ -646,7 +630,6 @@ document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); i
   updateBtns();
 })();
 
-// High score au chargement
 (function(){
   var hs=parseInt(localStorage.getItem('pendu-hs')||'0');
   var el=document.getElementById('hs-display');
@@ -655,9 +638,6 @@ document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); i
 </script>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  VERIFICATION CODE D'ACCES
-// ═══════════════════════════════════════════════════════
 (function() {
   if (localStorage.getItem('pendu-access') === 'ok') {
     document.getElementById('code-screen').classList.add('hidden');
@@ -670,9 +650,11 @@ window.validerCode = function() {
   var telInput    = document.getElementById('code-tel');
   var errEl       = document.getElementById('code-error');
 
+  // Forcer première lettre majuscule, reste minuscule
   var prenom = prenomInput.value.trim();
   prenom = prenom.charAt(0).toUpperCase() + prenom.slice(1).toLowerCase();
 
+  // Numéro sans espaces
   var tel = telInput.value.trim().replace(/\s/g, '');
 
   if (typeof CODES_VALIDES === 'undefined') {
@@ -723,7 +705,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ── Installation PWA ──
 var deferredPrompt = null;
 var installBtn = document.getElementById('install-btn');
 
@@ -748,6 +729,6 @@ window.addEventListener('appinstalled', function() {
 });
 </script>
 <button class="install-btn" id="install-btn">📲 Installer le jeu</button>
-<div class="signature">Développé par Bernard V — <span id="version-display" style="color:var(--accent3)">v1.1.5</span></div>
+<div class="signature">Développé par Bernard V — <span id="version-display" style="color:var(--accent3)">v1.1.6</span></div>
 </body>
 </html>
