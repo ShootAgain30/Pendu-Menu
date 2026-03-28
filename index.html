@@ -616,6 +616,7 @@ function startGame() {
 }
 
 function goToMenu() {
+  stopMotSfx();
   document.getElementById('overlay').classList.add('hidden');
   document.getElementById('menu-screen').classList.remove('hidden');
   switchToMenuMusic();
@@ -653,6 +654,7 @@ const MAX   = 6;
 //  LOGIQUE DU JEU
 // ═══════════════════════════════════════════════════════
 function newGame() {
+  stopMotSfx();
   const e = pickWord();
   W = e.word.toUpperCase(); H = e.hint; C = e.cat;
   G = new Set(); E = 0; O = false;
@@ -678,6 +680,14 @@ function guess(l) {
   render();
 }
 
+
+function stopMotSfx() {
+  if (window.motSfx) {
+    window.motSfx.pause();
+    window.motSfx.currentTime = 0;
+    window.motSfx = null;
+  }
+}
 function end(won) {
   document.getElementById('overlay-emoji').textContent = won ? '🎉' : '💀';
   const t = document.getElementById('overlay-title');
@@ -706,10 +716,12 @@ function end(won) {
     gif.src = 'Motmagique.gif';
     gif.classList.remove('hidden');
 
-    // Jouer Motmagique.mp3
+    // Jouer Motmagique.mp3 en boucle
     try {
-      const sfx = new Audio('Motmagique.mp3');
-      sfx.play().catch(function(){});
+      if (window.motSfx) { window.motSfx.pause(); window.motSfx.currentTime = 0; }
+      window.motSfx = new Audio('Motmagique.mp3');
+      window.motSfx.loop = true;
+      window.motSfx.play().catch(function(){});
     } catch(e) {}
   }
 
