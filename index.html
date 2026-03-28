@@ -8,7 +8,7 @@
 <title>Le Pendu</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  .signature{text-align:right;font-size:3vw;color:#444;font-style:italic;margin-top:2vw;padding-right:1vw}
+.signature{text-align:right;font-size:3vw;color:#444;font-style:italic;margin-top:2vw;padding-right:1vw}
 :root {
   --bg: #0f0c1a;
   --accent: #e8ff47;
@@ -37,6 +37,120 @@ body::before {
     radial-gradient(ellipse 60% 80% at 90% 100%, rgba(72,219,251,0.05) 0%, transparent 60%);
 }
 
+/* ═══════════════════════════════════════
+   MENU
+═══════════════════════════════════════ */
+#menu-screen {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 32px 24px;
+  background: var(--bg);
+  transition: opacity 0.5s, transform 0.5s;
+}
+#menu-screen.hidden {
+  opacity: 0; pointer-events: none; transform: scale(0.96);
+}
+
+.menu-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 20%, rgba(232,255,71,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(72,219,251,0.06) 0%, transparent 60%);
+}
+
+.menu-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 18vw, 5.5rem);
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-shadow: 0 0 60px rgba(232,255,71,0.35), 0 0 120px rgba(232,255,71,0.15);
+  line-height: 1;
+  text-align: center;
+  animation: menuPulse 4s ease-in-out infinite;
+  position: relative; z-index: 1;
+}
+@keyframes menuPulse {
+  0%,100% { text-shadow: 0 0 60px rgba(232,255,71,0.35), 0 0 120px rgba(232,255,71,0.15); }
+  50%      { text-shadow: 0 0 80px rgba(232,255,71,0.6),  0 0 160px rgba(232,255,71,0.25); }
+}
+
+/* Pendu déco sur le menu */
+.menu-gallows {
+  margin: 12px 0; position: relative; z-index: 1;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+.menu-section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px; margin-top: 20px;
+  position: relative; z-index: 1;
+}
+
+/* ── Difficulté ── */
+.diff-group {
+  display: flex; gap: 10px; position: relative; z-index: 1;
+}
+.diff-btn {
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem; letter-spacing: 0.12em;
+  padding: 10px 18px; border-radius: 6px; cursor: pointer;
+  transition: all 0.2s; position: relative; overflow: hidden;
+  min-width: 80px; text-align: center;
+}
+.diff-btn::after { content:''; position:absolute; inset:0; opacity:0; transition:opacity 0.15s; }
+.diff-btn:active::after { opacity:0.15; }
+.diff-btn.active-easy   { background:rgba(72,219,251,0.12); border-color:var(--accent3); color:var(--accent3); box-shadow:0 0 20px rgba(72,219,251,0.2); }
+.diff-btn.active-normal { background:rgba(232,255,71,0.12); border-color:var(--accent);  color:var(--accent);  box-shadow:0 0 20px rgba(232,255,71,0.2); }
+.diff-btn.active-hard   { background:rgba(255,71,87,0.12);  border-color:var(--accent2); color:var(--accent2); box-shadow:0 0 20px rgba(255,71,87,0.2); }
+
+/* ── Toggle indices ── */
+.toggle-row {
+  display: flex; align-items: center; gap: 14px;
+  position: relative; z-index: 1;
+  background: var(--card); border: 1px solid var(--border);
+  padding: 12px 20px; border-radius: 8px; cursor: pointer;
+  transition: all 0.2s; width: 100%; max-width: 300px; justify-content: space-between;
+}
+.toggle-row:active { transform: scale(0.98); }
+.toggle-label {
+  font-family: 'DM Mono', monospace; font-size: 0.75rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text);
+}
+.toggle-switch {
+  width: 42px; height: 24px; border-radius: 12px;
+  background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+  position: relative; transition: all 0.3s; flex-shrink: 0;
+}
+.toggle-switch::after {
+  content: ''; position: absolute; width: 18px; height: 18px;
+  border-radius: 50%; background: var(--muted);
+  top: 2px; left: 2px; transition: all 0.3s;
+}
+.toggle-switch.on { background: rgba(232,255,71,0.2); border-color: var(--accent); }
+.toggle-switch.on::after { background: var(--accent); left: 20px; box-shadow: 0 0 8px rgba(232,255,71,0.5); }
+
+/* ── Bouton Jouer ── */
+.play-btn {
+  background: var(--accent); color: var(--bg); border: none;
+  padding: 16px 60px; font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem; letter-spacing: 0.2em; cursor: pointer;
+  border-radius: 6px; transition: all 0.25s;
+  box-shadow: 0 0 40px rgba(232,255,71,0.35);
+  position: relative; z-index: 1; margin-top: 28px;
+  animation: playPulse 2.5s ease-in-out infinite;
+}
+@keyframes playPulse {
+  0%,100% { box-shadow: 0 0 40px rgba(232,255,71,0.35); }
+  50%      { box-shadow: 0 0 70px rgba(232,255,71,0.6); }
+}
+.play-btn:active { transform: scale(0.96); }
+
+/* ═══════════════════════════════════════
+   JEU
+═══════════════════════════════════════ */
 .app {
   position: relative; z-index: 1;
   height: 100dvh;
@@ -53,10 +167,22 @@ body::before {
   font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem;
   letter-spacing: 0.15em; color: var(--accent);
   text-shadow: 0 0 30px rgba(232,255,71,0.4); line-height: 1;
+  cursor: pointer;
 }
+.game-title:active { opacity: 0.7; }
 .score-badge { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
 .score-label { font-family:'DM Mono',monospace; font-size:0.55rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
 .score-val { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--accent3); letter-spacing:0.1em; line-height:1; }
+
+/* Badge difficulté dans le jeu */
+.diff-badge {
+  font-family:'DM Mono',monospace; font-size:0.55rem;
+  letter-spacing:0.15em; text-transform:uppercase;
+  padding:3px 8px; border-radius:100px; margin-left:8px;
+}
+.diff-badge.easy   { background:rgba(72,219,251,0.12); color:var(--accent3); border:1px solid rgba(72,219,251,0.3); }
+.diff-badge.normal { background:rgba(232,255,71,0.12); color:var(--accent);  border:1px solid rgba(232,255,71,0.3); }
+.diff-badge.hard   { background:rgba(255,71,87,0.12);  color:var(--accent2); border:1px solid rgba(255,71,87,0.3); }
 
 .category-pill {
   display:inline-flex; align-items:center; gap:6px;
@@ -150,12 +276,19 @@ body::before {
 }
 .play-again-btn:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(232,255,71,0.5); }
 
-/* Bouton image / vidéo dans l'overlay */
+/* Bouton retour menu dans overlay */
+.menu-btn {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); padding: 10px 30px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem; letter-spacing: 0.15em;
+  cursor: pointer; border-radius: 4px; transition: all 0.2s;
+}
+.menu-btn:hover { border-color: var(--muted); color: var(--text); }
+
 .bonus-btn {
-  background: transparent;
-  border: 2px solid var(--accent3);
-  color: var(--accent3);
-  padding: 10px 30px;
+  background: transparent; border: 2px solid var(--accent3);
+  color: var(--accent3); padding: 10px 30px;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 1.2rem; letter-spacing: 0.15em;
   cursor: pointer; border-radius: 4px; transition: all 0.2s;
@@ -163,7 +296,6 @@ body::before {
 .bonus-btn:hover { background: rgba(72,219,251,0.1); }
 .bonus-btn.hidden { display:none; }
 
-/* Visionneuse plein écran image / vidéo */
 .viewer {
   position:fixed; inset:0; background:#000;
   display:flex; align-items:center; justify-content:center;
@@ -188,9 +320,58 @@ body::before {
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════
+     ÉCRAN MENU
+════════════════════════════════════════════ -->
+<div id="menu-screen">
+  <div class="menu-bg"></div>
+
+  <div class="menu-logo">LE PENDU</div>
+
+  <!-- Petit pendu décoratif -->
+  <div class="menu-gallows">
+    <svg width="120" height="90" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="155" x2="200" y2="155" stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="155" x2="60"  y2="10"  stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="60" y1="10"  x2="140" y2="10"  stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="140" y1="10" x2="140" y2="30"  stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3"/>
+      <circle cx="140" cy="44" r="14" stroke="rgba(232,255,71,0.4)" stroke-width="2.5"/>
+      <line x1="140" y1="58"  x2="140" y2="100" stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="140" y1="70"  x2="118" y2="90"  stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="140" y1="70"  x2="162" y2="90"  stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="140" y1="100" x2="118" y2="130" stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="140" y1="100" x2="162" y2="130" stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- Difficulté -->
+  <div class="menu-section-title">Difficulté</div>
+  <div class="diff-group">
+    <button class="diff-btn active-easy" id="btn-easy"   onclick="setDiff('easy')">Facile</button>
+    <button class="diff-btn"             id="btn-normal" onclick="setDiff('normal')">Normal</button>
+    <button class="diff-btn"             id="btn-hard"   onclick="setDiff('hard')">Difficile</button>
+  </div>
+
+  <!-- Indices -->
+  <div class="menu-section-title">Options</div>
+  <div class="toggle-row" id="hint-toggle" onclick="toggleHints()">
+    <span class="toggle-label">💡 Indices</span>
+    <div class="toggle-switch on" id="hint-switch"></div>
+  </div>
+
+  <!-- Jouer -->
+  <button class="play-btn" onclick="startGame()">▶ JOUER</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ÉCRAN JEU
+════════════════════════════════════════════ -->
 <div class="app">
   <div class="header">
-    <div class="game-title">LE PENDU</div>
+    <div style="display:flex;align-items:center;gap:0">
+      <div class="game-title" onclick="goToMenu()" title="Menu">LE PENDU</div>
+      <span class="diff-badge easy" id="diff-badge">Facile</span>
+    </div>
     <div class="score-badge">
       <span class="score-label">Score</span>
       <span class="score-val" id="score">0</span>
@@ -230,6 +411,7 @@ body::before {
   <button class="bonus-btn hidden" id="img-btn">🖼 VOIR L'IMAGE</button>
   <button class="bonus-btn hidden" id="vid-btn">🎬 VOIR LA VIDÉO</button>
   <button class="play-again-btn" id="play-again-btn">REJOUER</button>
+  <button class="menu-btn" onclick="goToMenu()">☰ MENU</button>
 </div>
 
 <!-- Visionneuse image -->
@@ -246,8 +428,12 @@ body::before {
 <button class="audio-btn" id="next-btn"  style="bottom:14px">⏭ Next</button>
 
 <script>
-const WORDS = [
-  { word:"ELEPHANT",   cat:"Animaux",      hint:"Le plus grand mammifère terrestre" },
+// ═══════════════════════════════════════════════════════
+//  LISTES DE MOTS
+// ═══════════════════════════════════════════════════════
+
+const WORDS_EASY = [
+  { word:"ELEPHANT",   cat:"Animaux",       hint:"Le plus grand mammifère terrestre" },
   { word:"VOLCAN",     cat:"Nature",        hint:"Crache de la lave" },
   { word:"GUITARE",    cat:"Musique",       hint:"Instrument à cordes pincées" },
   { word:"PYRAMIDE",   cat:"Histoire",      hint:"Tombeau des pharaons" },
@@ -288,40 +474,108 @@ const WORDS = [
   { word:"NAUFRAGE",   cat:"Aventure",      hint:"Bateau coulé au fond de la mer" },
   { word:"OURAGAN",    cat:"Météo",         hint:"Tempête tropicale très violente" },
   { word:"PINGOUIN",   cat:"Animaux",       hint:"Oiseau noir et blanc qui ne vole pas" },
-  { word:"CAMÉLÉON",      cat:"Animaux",        hint:"Change de couleur pour se camoufler" },
-  { word:"ARCHIPEL",     cat:"Geographie",    hint:"Groupe d'iles rapprochees" },
-  { word:"MARATHON",     cat:"Sport",         hint:"Course de 42 km" },
-  { word:"ALCHIMIE",     cat:"Histoire",      hint:"Ancetre de la chimie, cherche la pierre philosophale" },
-  { word:"SQUELETTE",    cat:"Anatomie",      hint:"Structure osseuse du corps" },
-  { word:"ORIGAMI",      cat:"Art",           hint:"Pliage de papier japonais" },
-  { word:"CRATERE",      cat:"Nature",        hint:"Depression formee par un impact ou un volcan" },
-  { word:"METEORITE",    cat:"Espace",        hint:"Roche venue de l'espace tombee sur Terre" },
-  { word:"LABYRINTHE",   cat:"Aventure",      hint:"Chemin complexe ou l'on se perd facilement" },
-  { word:"PANTHERE",     cat:"Animaux",       hint:"Felin discret souvent noir" },
-  { word:"SYMPHONIE",    cat:"Musique",       hint:"Oeuvre orchestrale en plusieurs mouvements" },
-  { word:"MONASTERE",    cat:"Architecture",  hint:"Lieu de vie pour moines ou moniales" },
-  { word:"TRESOR",       cat:"Aventure",      hint:"Butin cache recherche par les pirates" },
-  { word:"GRENOUILLE",   cat:"Animaux",       hint:"Amphibien qui coasse" },
-  { word:"HORIZON",      cat:"Nature",        hint:"Ligne ou ciel et terre semblent se rejoindre" },
-  { word:"MIRAGE",       cat:"Phenomenes",    hint:"Illusion optique dans le desert" },
-  { word:"PAPYRUS",      cat:"Histoire",      hint:"Ancien support d'ecriture egyptien" },
-  { word:"VORTEX",       cat:"Phenomenes",    hint:"Tourbillon d'air ou d'eau" },
-  { word:"CITADELLE",    cat:"Architecture",  hint:"Fortification protegeant une ville" },
-  { word:"GOUFFRE",      cat:"Nature",        hint:"Trou profond dans le sol" },
-  { word:"NEBULEUSE",    cat:"Espace",        hint:"Nuage cosmique ou naissent les etoiles" },
-  { word:"GLACON",       cat:"Objet",        hint:"Petit cube qui refroidit les boissons" },
-  { word:"FANTASME",     cat:"Concept",      hint:"Imagination ou desir irreel" },
-  { word:"PIRANHA",      cat:"Animaux",      hint:"Petit poisson aux dents tres tranchantes" },
-  { word:"CARAVANE",     cat:"Voyage",       hint:"Maison mobile que l'on tracte" },
-  { word:"MOUSTIQUE",    cat:"Animaux",      hint:"Insecte qui pique et fait du bruit la nuit" }
-    
+  { word:"CAMELEON",   cat:"Animaux",       hint:"Change de couleur pour se camoufler" },
+  { word:"ARCHIPEL",   cat:"Géographie",    hint:"Groupe d'îles rapprochées" },
+  { word:"MARATHON",   cat:"Sport",         hint:"Course de 42 km" },
+  { word:"ALCHIMIE",   cat:"Histoire",      hint:"Ancêtre de la chimie" },
+  { word:"SQUELETTE",  cat:"Anatomie",      hint:"Structure osseuse du corps" },
+  { word:"ORIGAMI",    cat:"Art",           hint:"Pliage de papier japonais" },
+  { word:"CRATERE",    cat:"Nature",        hint:"Dépression formée par un impact ou un volcan" },
+  { word:"METEORITE",  cat:"Espace",        hint:"Roche venue de l'espace tombée sur Terre" },
+  { word:"LABYRINTHE", cat:"Aventure",      hint:"Chemin complexe où l'on se perd facilement" },
+  { word:"PANTHERE",   cat:"Animaux",       hint:"Félin discret souvent noir" },
+  { word:"SYMPHONIE",  cat:"Musique",       hint:"Œuvre orchestrale en plusieurs mouvements" },
+  { word:"MONASTERE",  cat:"Architecture",  hint:"Lieu de vie pour moines ou moniales" },
+  { word:"TRESOR",     cat:"Aventure",      hint:"Butin caché recherché par les pirates" },
+  { word:"GRENOUILLE", cat:"Animaux",       hint:"Amphibien qui coasse" },
+  { word:"HORIZON",    cat:"Nature",        hint:"Ligne où ciel et terre semblent se rejoindre" },
+  { word:"MIRAGE",     cat:"Phénomènes",    hint:"Illusion optique dans le désert" },
+  { word:"PAPYRUS",    cat:"Histoire",      hint:"Ancien support d'écriture égyptien" },
+  { word:"VORTEX",     cat:"Phénomènes",    hint:"Tourbillon d'air ou d'eau" },
+  { word:"CITADELLE",  cat:"Architecture",  hint:"Fortification protégeant une ville" },
+  { word:"GOUFFRE",    cat:"Nature",        hint:"Trou profond dans le sol" },
+  { word:"NEBULEUSE",  cat:"Espace",        hint:"Nuage cosmique où naissent les étoiles" },
+  { word:"GLACON",     cat:"Objet",         hint:"Petit cube qui refroidit les boissons" },
+  { word:"PIRANHA",    cat:"Animaux",       hint:"Petit poisson aux dents très tranchantes" },
+  { word:"CARAVANE",   cat:"Voyage",        hint:"Maison mobile que l'on tracte" },
+  { word:"MOUSTIQUE",  cat:"Animaux",       hint:"Insecte qui pique et fait du bruit la nuit" }
 ];
 
-const ROWS  = [['A','Z','E','R','T','Y','U','I','O','P'],['Q','S','D','F','G','H','J','K','L','M'],['W','X','C','V','B','N']];
-const PARTS = ['p-head','p-body','p-larm','p-rarm','p-lleg','p-rleg'];
-const MAX   = 6;
+const WORDS_NORMAL = [
+  { word:"METAMORPHOSE", cat:"Sciences",      hint:"Transformation complète d'un être vivant" },
+  { word:"BIOLUMINESCENCE", cat:"Nature",     hint:"Lumière produite par des organismes vivants" },
+  { word:"CARTOGRAPHIE", cat:"Géographie",   hint:"Art de dessiner des cartes" },
+  { word:"HIEROGLYPHE",  cat:"Histoire",      hint:"Écriture sacrée de l'Égypte ancienne" },
+  { word:"PALINDROME",   cat:"Langage",       hint:"Mot qui se lit pareil à l'envers" },
+  { word:"TROPOSPHERE",  cat:"Météo",         hint:"Couche basse de l'atmosphère terrestre" },
+  { word:"ARCHIPELAGO",  cat:"Géographie",    hint:"Vaste ensemble d'îles dispersées" },
+  { word:"PHOTOSYNTHESE",cat:"Sciences",      hint:"Les plantes fabriquent leur nourriture avec la lumière" }
+];
 
-// ── File mélangée générique ──────────────────────────────────
+const WORDS_HARD = [
+  { word:"BRACHYCEPHALE",  cat:"Anatomie",    hint:"Crâne court et large, comme le bouledogue" },
+  { word:"XYLOGRAPHIE",    cat:"Art",         hint:"Technique d'impression sur bois gravé" },
+  { word:"MAGNETOSPHERE",  cat:"Espace",      hint:"Champ magnétique protégeant la Terre" },
+  { word:"ICHTYOLOGIE",    cat:"Sciences",    hint:"Étude scientifique des poissons" },
+  { word:"ESCHATOLOGIE",   cat:"Philosophie", hint:"Étude des fins dernières de l'humanité" },
+  { word:"ZOROASTRISME",   cat:"Religion",    hint:"Ancienne religion perse du feu sacré" },
+  { word:"TACHYCARDIE",    cat:"Médecine",    hint:"Accélération anormale du rythme cardiaque" },
+  { word:"PALEONTOLOGIE",  cat:"Sciences",    hint:"Science des fossiles et des espèces disparues" }
+];
+
+// ═══════════════════════════════════════════════════════
+//  ÉTAT DU MENU
+// ═══════════════════════════════════════════════════════
+let currentDiff  = 'easy';
+let hintsEnabled = true;
+
+function setDiff(d) {
+  currentDiff = d;
+  ['easy','normal','hard'].forEach(function(x) {
+    const btn = document.getElementById('btn-' + x);
+    btn.className = 'diff-btn' + (x === d ? ' active-' + x : '');
+  });
+}
+
+function toggleHints() {
+  hintsEnabled = !hintsEnabled;
+  const sw = document.getElementById('hint-switch');
+  sw.className = 'toggle-switch' + (hintsEnabled ? ' on' : '');
+}
+
+function startGame() {
+  // Met à jour le badge de difficulté dans le jeu
+  const badge = document.getElementById('diff-badge');
+  const labels = { easy:'Facile', normal:'Normal', hard:'Difficile' };
+  badge.textContent = labels[currentDiff];
+  badge.className   = 'diff-badge ' + currentDiff;
+
+  // Choisit la liste de mots
+  if      (currentDiff === 'easy')   pickWord = makeQueue(WORDS_EASY);
+  else if (currentDiff === 'normal') pickWord = makeQueue(WORDS_NORMAL);
+  else                               pickWord = makeQueue(WORDS_HARD);
+
+  // Passe à l'écran jeu
+  document.getElementById('menu-screen').classList.add('hidden');
+
+  // Bascule la musique sur les pistes du jeu
+  switchToGameMusic();
+
+  // Lance la première partie
+  S = 0; winsCount = 0;
+  document.getElementById('score').textContent = '0';
+  newGame();
+}
+
+function goToMenu() {
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('menu-screen').classList.remove('hidden');
+  switchToMenuMusic();
+}
+
+// ═══════════════════════════════════════════════════════
+//  FILES MÉLANGÉES
+// ═══════════════════════════════════════════════════════
 function shuffle(a) {
   const b = [...a];
   for (let i = b.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
@@ -332,16 +586,24 @@ function makeQueue(arr) {
   return function() { if (!q.length) q = shuffle(arr); return q.shift(); };
 }
 
-// Files de mots, images, vidéos
-const pickWord = makeQueue(WORDS);
+let pickWord = makeQueue(WORDS_EASY);
 const pickImg  = makeQueue([1,2,3,4,5,6]);
 const pickVid  = makeQueue([1,2,3,4,5,6]);
 
-// ── État ────────────────────────────────────────────────────
-let W, H, C, G, E, S = 0, O;
-let winsCount = 0; // compteur victoires consécutives pour déclencher image
+// ═══════════════════════════════════════════════════════
+//  ÉTAT DU JEU
+// ═══════════════════════════════════════════════════════
+let W, H, C, G, E, O;
+let S = 0;
+let winsCount = 0;
 
-// ── Jeu ─────────────────────────────────────────────────────
+const ROWS  = [['A','Z','E','R','T','Y','U','I','O','P'],['Q','S','D','F','G','H','J','K','L','M'],['W','X','C','V','B','N']];
+const PARTS = ['p-head','p-body','p-larm','p-rarm','p-lleg','p-rleg'];
+const MAX   = 6;
+
+// ═══════════════════════════════════════════════════════
+//  LOGIQUE DU JEU
+// ═══════════════════════════════════════════════════════
 function newGame() {
   const e = pickWord();
   W = e.word.toUpperCase(); H = e.hint; C = e.cat;
@@ -360,10 +622,10 @@ function guess(l) {
     S += Math.max(10, 50-E*8);
     O = true;
     winsCount++;
-    setTimeout(()=>end(true), 400);
+    setTimeout(function(){ end(true); }, 400);
   } else if (E >= MAX) {
     O = true;
-    setTimeout(()=>end(false), 400);
+    setTimeout(function(){ end(false); }, 400);
   }
   render();
 }
@@ -377,25 +639,20 @@ function end(won) {
     ? 'Score\u00A0: <span>+' + Math.max(10,50-E*8) + ' pts</span>'
     : 'Le mot\u00A0était\u00A0: <span>' + W + '</span>';
 
-  // Bouton image toutes les 2 victoires
-  if (won && winsCount % 2 === 0) {
-    document.getElementById('img-btn').classList.remove('hidden');
-  }
-  // Bouton vidéo à chaque défaite
-  if (!won) {
-    document.getElementById('vid-btn').classList.remove('hidden');
-  }
+  if (won && winsCount % 2 === 0) document.getElementById('img-btn').classList.remove('hidden');
+  if (!won) document.getElementById('vid-btn').classList.remove('hidden');
 
   document.getElementById('overlay').classList.remove('hidden');
 }
 
-// ── Render ───────────────────────────────────────────────────
 function render() {
   document.getElementById('category-label').textContent = C;
   document.getElementById('score').textContent = S;
-  document.getElementById('hint-row').textContent = E >= 2 ? '💡 ' + H : '';
 
-  PARTS.forEach((id,i) => document.getElementById(id).style.opacity = E > i ? '1' : '0');
+  // Indice : uniquement si hintsEnabled ET au moins 2 erreurs
+  document.getElementById('hint-row').textContent = (hintsEnabled && E >= 2) ? '💡 ' + H : '';
+
+  PARTS.forEach(function(id,i){ document.getElementById(id).style.opacity = E > i ? '1' : '0'; });
 
   const bar = document.getElementById('attempts-bar');
   bar.innerHTML = '';
@@ -427,18 +684,19 @@ function render() {
       const b = document.createElement('button'); b.className = 'key'; b.textContent = l;
       if      (G.has(l))  { b.classList.add(W.includes(l) ? 'correct' : 'wrong'); b.disabled = true; }
       else if (O)         { b.disabled = true; }
-      else                { b.addEventListener('click', ()=>guess(l)); }
+      else                { b.addEventListener('click', function(){ guess(l); }); }
       r.appendChild(b);
     }
     kb.appendChild(r);
   }
 }
 
-// ── Boutons overlay ──────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+//  BOUTONS OVERLAY
+// ═══════════════════════════════════════════════════════
 document.getElementById('play-again-btn').addEventListener('click', newGame);
-document.addEventListener('keydown', e => { const l=e.key.toUpperCase(); if(/^[A-Z]$/.test(l)) guess(l); });
+document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); if(/^[A-Z]$/.test(l)) guess(l); });
 
-// Bouton image
 document.getElementById('img-btn').addEventListener('click', function() {
   const n = pickImg();
   const imgEl = document.getElementById('img-el');
@@ -448,7 +706,6 @@ document.getElementById('img-btn').addEventListener('click', function() {
   imgEl.src = 'img/' + n + '.jpg';
 });
 
-// Clic/touch sur image → ferme et reprend
 function closeImg() {
   document.getElementById('img-viewer').classList.add('hidden');
   newGame();
@@ -456,17 +713,15 @@ function closeImg() {
 document.getElementById('img-el').addEventListener('click',    closeImg);
 document.getElementById('img-el').addEventListener('touchend', function(e){ e.preventDefault(); closeImg(); });
 
-// Bouton vidéo
 document.getElementById('vid-btn').addEventListener('click', function() {
   const n = pickVid();
   const vidEl = document.getElementById('vid-el');
   vidEl.src = 'vid/' + n + '.mp4';
   vidEl.load();
-  vidEl.play().catch(()=>{});
+  vidEl.play().catch(function(){});
   document.getElementById('vid-viewer').classList.remove('hidden');
 });
 
-// Clic/touch sur vidéo → stop + ferme + reprend
 function closeVid() {
   const vidEl = document.getElementById('vid-el');
   vidEl.pause();
@@ -478,57 +733,92 @@ function closeVid() {
 document.getElementById('vid-el').addEventListener('click',    closeVid);
 document.getElementById('vid-el').addEventListener('touchend', function(e){ e.preventDefault(); closeVid(); });
 
-// ── Démarrage ────────────────────────────────────────────────
-newGame();
-
-// ── Audio ────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+//  AUDIO
+// ═══════════════════════════════════════════════════════
 (function() {
   try {
-    const tracks = ['01.mp3','02.mp3','03.mp3'];
-    let idx = 0, on = false;
+    const menuTrack  = 'menu.mp3';
+    const gameTracks = ['01.mp3','02.mp3','03.mp3'];
+    let idx = 0, on = false, mode = 'menu'; // 'menu' ou 'game'
+
     const a = new Audio();
     a.preload = 'none';
 
     a.addEventListener('ended', function() {
-      idx = (idx+1) % tracks.length;
-      a.src = tracks[idx];
-      a.load();
-      a.addEventListener('canplaythrough', function h() {
-        a.removeEventListener('canplaythrough', h);
-        if (on) a.play().catch(()=>{});
-      });
+      if (mode === 'game') {
+        idx = (idx+1) % gameTracks.length;
+        a.src = gameTracks[idx];
+        a.load();
+        a.addEventListener('canplaythrough', function h() {
+          a.removeEventListener('canplaythrough', h);
+          if (on) a.play().catch(function(){});
+        });
+      }
+      // En mode menu, la piste menu ne se relance pas (ou tu peux la looper)
     });
+
+    // Expose les fonctions pour les transitions menu/jeu
+    window.switchToMenuMusic = function() {
+      mode = 'menu';
+      if (on) {
+        a.pause();
+        a.src = menuTrack;
+        a.load();
+        a.play().catch(function(){});
+      }
+    };
+    window.switchToGameMusic = function() {
+      mode = 'game';
+      if (on) {
+        idx = 0;
+        a.pause();
+        a.src = gameTracks[idx];
+        a.load();
+        a.play().catch(function(){});
+      }
+    };
 
     const mb = document.getElementById('music-btn');
     const nb = document.getElementById('next-btn');
 
     mb.addEventListener('click', function() {
       if (a.paused) {
-        a.src = tracks[idx];
+        const src = mode === 'menu' ? menuTrack : gameTracks[idx];
+        a.src = src;
         a.load();
-        a.play().then(function() { on=true; mb.textContent='🔇 Stop'; }).catch(()=>{});
+        a.play().then(function(){ on=true; mb.textContent='🔇 Stop'; }).catch(function(){});
       } else {
         a.pause(); on=false; mb.textContent='🎵 Musique';
       }
     });
 
     nb.addEventListener('click', function() {
-      idx = (idx+1) % tracks.length;
-      a.src = tracks[idx]; a.load();
-      if (on) a.play().catch(()=>{});
+      if (mode === 'game') {
+        idx = (idx+1) % gameTracks.length;
+        a.src = gameTracks[idx]; a.load();
+        if (on) a.play().catch(function(){});
+      }
     });
+
+    // Initialise les fonctions si le module audio n'est pas chargé
+    if (!window.switchToMenuMusic) window.switchToMenuMusic = function(){};
+    if (!window.switchToGameMusic) window.switchToGameMusic = function(){};
 
   } catch(err) {
     document.getElementById('music-btn').style.display='none';
     document.getElementById('next-btn').style.display='none';
+    window.switchToMenuMusic = function(){};
+    window.switchToGameMusic = function(){};
   }
 })();
 </script>
-  <script>
+
+<script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(function(){});
 }
 </script>
-  <div class="signature">Développé par Bernard V <span id="app-version"></span></div>
+<div class="signature">Développé par Bernard V <span id="app-version"></span></div>
 </body>
 </html>
