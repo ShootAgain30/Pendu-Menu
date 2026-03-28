@@ -1,5 +1,6 @@
 const CACHE = 'pendu-v1.1.1';
 const FILES = [
+  './',
   'index.html',
   'manifest.json',
   'icone-192.png',
