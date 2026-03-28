@@ -2,5 +2,11 @@ var CODES_VALIDES = [
   { prenom: 'Bernard', tel: '0661341769' },
   { prenom: 'Jerome', tel: '0695225018' },
   { prenom: 'Marie', tel: '0698765432' },
-  { prenom: 'Thomas', tel: '0677777777' }
+  { prenom: 'XXXX', tel: '0000' },
+  { prenom: 'XXXX', tel: '0000' },
+  { prenom: 'XXXX', tel: '0000' },
+  { prenom: 'XXXX', tel: '0000' },
+  { prenom: 'XXXX', tel: '0000' },
+  { prenom: 'XXXX', tel: '0000' },
+  { prenom: 'XXXX', tel: '0000' },
 ];
