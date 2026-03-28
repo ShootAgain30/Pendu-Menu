@@ -32,7 +32,7 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
 .code-logo { font-family:'Bebas Neue',sans-serif; font-size:clamp(3rem,15vw,4.5rem); letter-spacing:0.18em; color:var(--accent); text-shadow:0 0 60px rgba(232,255,71,0.35); line-height:1; text-align:center; margin-bottom:8px; }
 .code-subtitle { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:40px; text-align:center; }
 .code-input-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; width:100%; max-width:280px; }
-.code-input { background:var(--card); border:2px solid var(--border); color:var(--text); font-family:'Bebas Neue',sans-serif; font-size:2.5rem; letter-spacing:0.4em; text-align:center; width:100%; padding:16px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; }
+.code-input { background:var(--card); border:2px solid var(--border); color:var(--text); font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.1em; text-align:center; width:100%; padding:16px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; }
 .code-input:focus { border-color:var(--accent); }
 .code-input.error { border-color:var(--accent2); animation:shake 0.4s ease; }
 .code-error { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--accent2); letter-spacing:0.1em; min-height:20px; text-align:center; }
@@ -157,9 +157,10 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
 <div id="code-screen">
   <div class="menu-bg"></div>
   <div class="code-logo">LE PENDU</div>
-  <div class="code-subtitle">🔒 Accès privé — entrez votre code</div>
+  <div class="code-subtitle">🔒 Accès privé — identifiez-vous</div>
   <div class="code-input-wrap">
-    <input class="code-input" id="code-input" type="number" maxlength="4" placeholder="••••" inputmode="numeric">
+    <input class="code-input" id="code-prenom" type="text" placeholder="Prénom" inputmode="text" autocomplete="off">
+    <input class="code-input" id="code-tel" type="tel" placeholder="Numéro de téléphone" inputmode="numeric" autocomplete="off">
     <div class="code-error" id="code-error"></div>
     <button class="code-submit" onclick="validerCode()">ENTRER</button>
   </div>
@@ -658,7 +659,6 @@ document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); i
 //  VERIFICATION CODE D'ACCES
 // ═══════════════════════════════════════════════════════
 (function() {
-  // Si déjà validé dans cette session, passer directement au menu
   if (localStorage.getItem('pendu-access') === 'ok') {
     document.getElementById('code-screen').classList.add('hidden');
     document.getElementById('menu-screen').classList.remove('hidden');
@@ -666,38 +666,46 @@ document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); i
 })();
 
 window.validerCode = function() {
-  var input = document.getElementById('code-input');
-  var errEl = document.getElementById('code-error');
-  var code  = input.value.trim();
+  var prenomInput = document.getElementById('code-prenom');
+  var telInput    = document.getElementById('code-tel');
+  var errEl       = document.getElementById('code-error');
 
-  // Vérifier que codes.js est chargé
+  var prenom = prenomInput.value.trim();
+  prenom = prenom.charAt(0).toUpperCase() + prenom.slice(1).toLowerCase();
+
+  var tel = telInput.value.trim().replace(/\s/g, '');
+
   if (typeof CODES_VALIDES === 'undefined') {
     errEl.textContent = 'Erreur de chargement, réessayez.';
     return;
   }
 
-  if (CODES_VALIDES.indexOf(code) !== -1) {
-    // Code valide
+  var ok = CODES_VALIDES.some(function(c) {
+    return c.prenom === prenom && c.tel === tel;
+  });
+
+  if (ok) {
     localStorage.setItem('pendu-access', 'ok');
     document.getElementById('code-screen').classList.add('hidden');
     document.getElementById('menu-screen').classList.remove('hidden');
-    // Afficher le high score
     var hs = parseInt(localStorage.getItem('pendu-hs') || '0');
     document.getElementById('hs-display').textContent = hs;
   } else {
-    // Code invalide
-    errEl.textContent = '❌ Code incorrect';
-    input.classList.add('error');
-    input.value = '';
+    errEl.textContent = '❌ Prénom ou numéro incorrect';
+    prenomInput.classList.add('error');
+    telInput.classList.add('error');
     setTimeout(function() {
-      input.classList.remove('error');
+      prenomInput.classList.remove('error');
+      telInput.classList.remove('error');
       errEl.textContent = '';
     }, 1500);
   }
 };
 
-// Valider avec la touche Entrée
-document.getElementById('code-input').addEventListener('keydown', function(e) {
+document.getElementById('code-prenom').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') validerCode();
+});
+document.getElementById('code-tel').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') validerCode();
 });
 
