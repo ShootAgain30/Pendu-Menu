@@ -640,7 +640,13 @@ function end(won) {
     : 'Le mot\u00A0était\u00A0: <span>' + W + '</span>';
 
   if (won && winsCount % 2 === 0) document.getElementById('img-btn').classList.remove('hidden');
-  if (!won) document.getElementById('vid-btn').classList.remove('hidden');
+  if (!won) {
+    document.getElementById('vid-btn').classList.remove('hidden');
+    try {
+      const sfx = new Audio('Motmagique.mp3');
+      sfx.play().catch(function(){});
+    } catch(e) {}
+  }
 
   document.getElementById('overlay').classList.remove('hidden');
 }
