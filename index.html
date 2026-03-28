@@ -319,15 +319,32 @@ body::before {
 }
 .back-menu-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
 
-.audio-btn {
-  position:fixed; right:14px; z-index:99;
+.game-audio-bar {
+  display:flex; gap:10px; justify-content:flex-end;
+  width:100%; padding:6px 0 2px; flex-shrink:0;
+}
+.game-audio-bar button {
   background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35);
   color:#e8ff47; font-family:'DM Mono',monospace;
   font-size:0.65rem; letter-spacing:0.1em;
   padding:7px 12px; border-radius:100px;
   cursor:pointer; transition:all 0.2s;
 }
-.audio-btn:active { transform:scale(0.95); }
+.game-audio-bar button:active { transform:scale(0.95); }
+
+/* Bouton son dans le menu */
+.menu-sound-btn {
+  background: rgba(232,255,71,0.08);
+  border: 1px solid rgba(232,255,71,0.35);
+  color: #e8ff47;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.1em;
+  padding: 7px 20px; border-radius: 100px;
+  cursor: pointer; transition: all 0.2s;
+  margin-top: 10px;
+  position: relative; z-index: 1;
+}
+.menu-sound-btn:active { transform: scale(0.95); }
 </style>
 </head>
 <body>
@@ -373,6 +390,9 @@ body::before {
 
   <!-- Jouer -->
   <button class="play-btn" onclick="startGame()">▶ JOUER</button>
+
+  <!-- Son menu -->
+  <button class="menu-sound-btn" id="menu-sound-btn" onclick="toggleSound()">🔊 Son ON</button>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -417,7 +437,12 @@ body::before {
   <div class="word-display"  id="word-display"></div>
   <div class="hint-row"      id="hint-row"></div>
   <div class="keyboard"      id="keyboard"></div>
+  <div class="game-audio-bar">
+    <button id="game-sound-btn" onclick="toggleSound()">🔊 Son ON</button>
+    <button id="next-btn" onclick="nextTrack()">⏭ Next</button>
+  </div>
 </div>
+
 
 <div class="overlay hidden" id="overlay">
   <div class="overlay-emoji" id="overlay-emoji"></div>
@@ -439,8 +464,7 @@ body::before {
   <video id="vid-el" src="" playsinline></video>
 </div>
 
-<button class="audio-btn" id="sound-toggle-btn" style="bottom:52px">🔊 Son ON</button>
-<button class="audio-btn" id="next-btn"  style="bottom:14px">⏭ Next</button>
+<!-- boutons son déplacés dans chaque écran -->
 
 <script>
 // ═══════════════════════════════════════════════════════
@@ -758,85 +782,72 @@ document.getElementById('vid-el').addEventListener('touchend', function(e){ e.pr
 //  AUDIO
 // ═══════════════════════════════════════════════════════
 (function() {
-  try {
-    const menuTrack  = 'menu.mp3';
-    const gameTracks = ['01.mp3','02.mp3','03.mp3'];
-    let idx = 0, on = true, mode = 'menu';
+  const menuTrack  = 'menu.mp3';
+  const gameTracks = ['01.mp3','02.mp3','03.mp3'];
+  let idx = 0, soundOn = false, mode = 'menu';
+  const player = new Audio();
+  player.preload = 'none';
 
-    const a = new Audio();
-    a.preload = 'none';
-
-    function updateBtn() {
-      const btn = document.getElementById('sound-toggle-btn');
-      if (btn) btn.textContent = on ? '🔊 Son ON' : '🔇 Son OFF';
+  // Fin de piste → suivante automatique
+  player.addEventListener('ended', function() {
+    if (!soundOn) return;
+    if (mode === 'game') {
+      idx = (idx + 1) % gameTracks.length;
     }
+    // menu : relance la même, jeu : piste suivante
+    startPlay();
+  });
 
-    function playTrack(src) {
-      a.pause();
-      a.src = src;
-      a.load();
-      a.play().catch(function(){});
-    }
-
-    a.addEventListener('ended', function() {
-      if (mode === 'game' && on) {
-        idx = (idx + 1) % gameTracks.length;
-        playTrack(gameTracks[idx]);
-      } else if (mode === 'menu' && on) {
-        // Relance la musique du menu en boucle
-        playTrack(menuTrack);
-      }
-    });
-
-    // Appelée quand on clique JOUER — premier clic utilisateur = déblocage audio
-    window.switchToGameMusic = function() {
-      mode = 'game';
-      idx = 0;
-      if (on) playTrack(gameTracks[idx]);
-    };
-
-    // Appelée quand on revient au menu
-    window.switchToMenuMusic = function() {
-      mode = 'menu';
-      if (on) playTrack(menuTrack);
-    };
-
-    // Bouton son ON/OFF (visible partout)
-    const tb = document.getElementById('sound-toggle-btn');
-    if (tb) {
-      tb.addEventListener('click', function() {
-        on = !on;
-        if (on) {
-          const src = mode === 'menu' ? menuTrack : gameTracks[idx];
-          playTrack(src);
-        } else {
-          a.pause();
-        }
-        updateBtn();
-      });
-    }
-
-    // Bouton piste suivante (jeu seulement)
-    const nb = document.getElementById('next-btn');
-    if (nb) {
-      nb.addEventListener('click', function() {
-        if (mode === 'game') {
-          idx = (idx + 1) % gameTracks.length;
-          if (on) playTrack(gameTracks[idx]);
-        }
-      });
-    }
-
-    updateBtn();
-
-  } catch(err) {
-    var tb = document.getElementById('sound-toggle-btn');
-    var nb = document.getElementById('next-btn');
-    if (tb) tb.style.display = 'none';
-    if (nb) nb.style.display = 'none';
-    window.switchToMenuMusic = function(){};
-    window.switchToGameMusic = function(){};
+  function startPlay() {
+    var src = (mode === 'menu') ? menuTrack : gameTracks[idx];
+    player.src = src;
+    player.load();
+    player.play().catch(function(){});
   }
+
+  function updateBtns() {
+    var label = soundOn ? '🔊 Son ON' : '🔇 Son OFF';
+    var mb = document.getElementById('menu-sound-btn');
+    var gb = document.getElementById('game-sound-btn');
+    if (mb) mb.textContent = label;
+    if (gb) gb.textContent = label;
+  }
+
+  // Bouton son (menu ET jeu)
+  window.toggleSound = function() {
+    soundOn = !soundOn;
+    if (soundOn) {
+      startPlay();
+    } else {
+      player.pause();
+      player.src = '';
+    }
+    updateBtns();
+  };
+
+  // Clic JOUER → passe en mode jeu
+  window.switchToGameMusic = function() {
+    mode = 'game'; idx = 0;
+    player.pause(); player.src = '';
+    if (soundOn) startPlay();
+  };
+
+  // Retour menu → passe en mode menu
+  window.switchToMenuMusic = function() {
+    mode = 'menu';
+    player.pause(); player.src = '';
+    if (soundOn) startPlay();
+  };
+
+  // Bouton Next (jeu uniquement)
+  window.nextTrack = function() {
+    if (mode !== 'game') return;
+    idx = (idx + 1) % gameTracks.length;
+    player.pause(); player.src = '';
+    if (soundOn) startPlay();
+  };
+
+  updateBtns();
 })();
 </script>
 
