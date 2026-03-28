@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link rel="manifest" href="manifest.json">
+<script src="codes.js"></script>
 <meta name="theme-color" content="#0f0c1a">
 <title>Le Pendu</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -24,6 +25,19 @@ html, body { height:100%; background:var(--bg); color:var(--text); font-family:'
 body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
   background: radial-gradient(ellipse 80% 60% at 10% 0%,rgba(232,255,71,0.06) 0%,transparent 60%),
               radial-gradient(ellipse 60% 80% at 90% 100%,rgba(72,219,251,0.05) 0%,transparent 60%); }
+
+/* ── ECRAN CODE ── */
+#code-screen { position:fixed; inset:0; z-index:500; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px; background:var(--bg); }
+#code-screen.hidden { display:none; }
+.code-logo { font-family:'Bebas Neue',sans-serif; font-size:clamp(3rem,15vw,4.5rem); letter-spacing:0.18em; color:var(--accent); text-shadow:0 0 60px rgba(232,255,71,0.35); line-height:1; text-align:center; margin-bottom:8px; }
+.code-subtitle { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:40px; text-align:center; }
+.code-input-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; width:100%; max-width:280px; }
+.code-input { background:var(--card); border:2px solid var(--border); color:var(--text); font-family:'Bebas Neue',sans-serif; font-size:2.5rem; letter-spacing:0.4em; text-align:center; width:100%; padding:16px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; }
+.code-input:focus { border-color:var(--accent); }
+.code-input.error { border-color:var(--accent2); animation:shake 0.4s ease; }
+.code-error { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--accent2); letter-spacing:0.1em; min-height:20px; text-align:center; }
+.code-submit { background:var(--accent); color:var(--bg); border:none; padding:14px 50px; font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.2em; cursor:pointer; border-radius:6px; transition:all 0.2s; box-shadow:0 0 30px rgba(232,255,71,0.3); width:100%; }
+.code-submit:active { transform:scale(0.97); }
 
 /* ── MENU ── */
 #menu-screen { position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px; background:var(--bg); transition:opacity 0.5s,transform 0.5s; }
@@ -139,8 +153,20 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
 </head>
 <body>
 
+<!-- ═══════════ ECRAN CODE ═══════════ -->
+<div id="code-screen">
+  <div class="menu-bg"></div>
+  <div class="code-logo">LE PENDU</div>
+  <div class="code-subtitle">🔒 Accès privé — entrez votre code</div>
+  <div class="code-input-wrap">
+    <input class="code-input" id="code-input" type="number" maxlength="4" placeholder="••••" inputmode="numeric">
+    <div class="code-error" id="code-error"></div>
+    <button class="code-submit" onclick="validerCode()">ENTRER</button>
+  </div>
+</div>
+
 <!-- ═══════════ MENU ═══════════ -->
-<div id="menu-screen">
+<div id="menu-screen" class="hidden">
   <div class="menu-bg"></div>
   <div class="highscore-bar">🏆 High Score&nbsp;: <span id="hs-display">0</span></div>
   <div class="menu-logo">LE PENDU</div>
@@ -628,6 +654,53 @@ document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); i
 </script>
 
 <script>
+// ═══════════════════════════════════════════════════════
+//  VERIFICATION CODE D'ACCES
+// ═══════════════════════════════════════════════════════
+(function() {
+  // Si déjà validé dans cette session, passer directement au menu
+  if (sessionStorage.getItem('pendu-access') === 'ok') {
+    document.getElementById('code-screen').classList.add('hidden');
+    document.getElementById('menu-screen').classList.remove('hidden');
+  }
+})();
+
+window.validerCode = function() {
+  var input = document.getElementById('code-input');
+  var errEl = document.getElementById('code-error');
+  var code  = input.value.trim();
+
+  // Vérifier que codes.js est chargé
+  if (typeof CODES_VALIDES === 'undefined') {
+    errEl.textContent = 'Erreur de chargement, réessayez.';
+    return;
+  }
+
+  if (CODES_VALIDES.indexOf(code) !== -1) {
+    // Code valide
+    sessionStorage.setItem('pendu-access', 'ok');
+    document.getElementById('code-screen').classList.add('hidden');
+    document.getElementById('menu-screen').classList.remove('hidden');
+    // Afficher le high score
+    var hs = parseInt(localStorage.getItem('pendu-hs') || '0');
+    document.getElementById('hs-display').textContent = hs;
+  } else {
+    // Code invalide
+    errEl.textContent = '❌ Code incorrect';
+    input.classList.add('error');
+    input.value = '';
+    setTimeout(function() {
+      input.classList.remove('error');
+      errEl.textContent = '';
+    }, 1500);
+  }
+};
+
+// Valider avec la touche Entrée
+document.getElementById('code-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') validerCode();
+});
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(function(){});
 }
