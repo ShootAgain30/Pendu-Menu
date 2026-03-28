@@ -1,4 +1,4 @@
-const CACHE = 'pendu-v2.0.1';
+const CACHE = 'pendu-v1.1.0';
 const FILES = [
   'index.html',
   'manifest.json',
@@ -9,19 +9,7 @@ const FILES = [
   '03.mp3',
   'menu.mp3',
   'Motmagique.mp3',
-  'Motmagique.gif',
-  'img/1.jpg',
-  'img/2.jpg',
-  'img/3.jpg',
-  'img/4.jpg',
-  'img/5.jpg',
-  'img/6.jpg',
-  'vid/1.mp4',
-  'vid/2.mp4',
-  'vid/3.mp4',
-  'vid/4.mp4',
-  'vid/5.mp4',
-  'vid/6.mp4'
+  'Motmagique.gif'
 ];
 self.addEventListener('install', function(e) {
   e.waitUntil(
