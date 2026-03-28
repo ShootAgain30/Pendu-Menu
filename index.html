@@ -307,6 +307,18 @@ body::before {
   object-fit:contain; cursor:pointer;
 }
 
+.back-menu-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 6px 12px; border-radius: 100px;
+  cursor: pointer; transition: all 0.2s;
+  -webkit-user-select: none; user-select: none;
+}
+.back-menu-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+
 .audio-btn {
   position:fixed; right:14px; z-index:99;
   background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35);
@@ -368,13 +380,16 @@ body::before {
 ════════════════════════════════════════════ -->
 <div class="app">
   <div class="header">
-    <div style="display:flex;align-items:center;gap:0">
-      <div class="game-title" onclick="goToMenu()" title="Menu">LE PENDU</div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div class="game-title">LE PENDU</div>
       <span class="diff-badge easy" id="diff-badge">Facile</span>
     </div>
-    <div class="score-badge">
-      <span class="score-label">Score</span>
-      <span class="score-val" id="score">0</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="back-menu-btn" onclick="goToMenu()">☰ Menu</button>
+      <div class="score-badge">
+        <span class="score-label">Score</span>
+        <span class="score-val" id="score">0</span>
+      </div>
     </div>
   </div>
 
@@ -424,7 +439,7 @@ body::before {
   <video id="vid-el" src="" playsinline></video>
 </div>
 
-<button class="audio-btn" id="music-btn" style="bottom:52px">🎵 Musique</button>
+<button class="audio-btn" id="sound-toggle-btn" style="bottom:52px">🔊 Son ON</button>
 <button class="audio-btn" id="next-btn"  style="bottom:14px">⏭ Next</button>
 
 <script>
@@ -746,74 +761,79 @@ document.getElementById('vid-el').addEventListener('touchend', function(e){ e.pr
   try {
     const menuTrack  = 'menu.mp3';
     const gameTracks = ['01.mp3','02.mp3','03.mp3'];
-    let idx = 0, on = false, mode = 'menu'; // 'menu' ou 'game'
+    let idx = 0, on = true, mode = 'menu';
 
     const a = new Audio();
     a.preload = 'none';
 
+    function updateBtn() {
+      const btn = document.getElementById('sound-toggle-btn');
+      if (btn) btn.textContent = on ? '🔊 Son ON' : '🔇 Son OFF';
+    }
+
+    function playTrack(src) {
+      a.pause();
+      a.src = src;
+      a.load();
+      a.play().catch(function(){});
+    }
+
     a.addEventListener('ended', function() {
-      if (mode === 'game') {
-        idx = (idx+1) % gameTracks.length;
-        a.src = gameTracks[idx];
-        a.load();
-        a.addEventListener('canplaythrough', function h() {
-          a.removeEventListener('canplaythrough', h);
-          if (on) a.play().catch(function(){});
-        });
+      if (mode === 'game' && on) {
+        idx = (idx + 1) % gameTracks.length;
+        playTrack(gameTracks[idx]);
+      } else if (mode === 'menu' && on) {
+        // Relance la musique du menu en boucle
+        playTrack(menuTrack);
       }
-      // En mode menu, la piste menu ne se relance pas (ou tu peux la looper)
     });
 
-    // Expose les fonctions pour les transitions menu/jeu
-    window.switchToMenuMusic = function() {
-      mode = 'menu';
-      if (on) {
-        a.pause();
-        a.src = menuTrack;
-        a.load();
-        a.play().catch(function(){});
-      }
-    };
+    // Appelée quand on clique JOUER — premier clic utilisateur = déblocage audio
     window.switchToGameMusic = function() {
       mode = 'game';
-      if (on) {
-        idx = 0;
-        a.pause();
-        a.src = gameTracks[idx];
-        a.load();
-        a.play().catch(function(){});
-      }
+      idx = 0;
+      if (on) playTrack(gameTracks[idx]);
     };
 
-    const mb = document.getElementById('music-btn');
+    // Appelée quand on revient au menu
+    window.switchToMenuMusic = function() {
+      mode = 'menu';
+      if (on) playTrack(menuTrack);
+    };
+
+    // Bouton son ON/OFF (visible partout)
+    const tb = document.getElementById('sound-toggle-btn');
+    if (tb) {
+      tb.addEventListener('click', function() {
+        on = !on;
+        if (on) {
+          const src = mode === 'menu' ? menuTrack : gameTracks[idx];
+          playTrack(src);
+        } else {
+          a.pause();
+        }
+        updateBtn();
+      });
+    }
+
+    // Bouton piste suivante (jeu seulement)
     const nb = document.getElementById('next-btn');
+    if (nb) {
+      nb.addEventListener('click', function() {
+        if (mode === 'game') {
+          idx = (idx + 1) % gameTracks.length;
+          if (on) playTrack(gameTracks[idx]);
+        }
+      });
+    }
 
-    mb.addEventListener('click', function() {
-      if (a.paused) {
-        const src = mode === 'menu' ? menuTrack : gameTracks[idx];
-        a.src = src;
-        a.load();
-        a.play().then(function(){ on=true; mb.textContent='🔇 Stop'; }).catch(function(){});
-      } else {
-        a.pause(); on=false; mb.textContent='🎵 Musique';
-      }
-    });
-
-    nb.addEventListener('click', function() {
-      if (mode === 'game') {
-        idx = (idx+1) % gameTracks.length;
-        a.src = gameTracks[idx]; a.load();
-        if (on) a.play().catch(function(){});
-      }
-    });
-
-    // Initialise les fonctions si le module audio n'est pas chargé
-    if (!window.switchToMenuMusic) window.switchToMenuMusic = function(){};
-    if (!window.switchToGameMusic) window.switchToGameMusic = function(){};
+    updateBtn();
 
   } catch(err) {
-    document.getElementById('music-btn').style.display='none';
-    document.getElementById('next-btn').style.display='none';
+    var tb = document.getElementById('sound-toggle-btn');
+    var nb = document.getElementById('next-btn');
+    if (tb) tb.style.display = 'none';
+    if (nb) nb.style.display = 'none';
     window.switchToMenuMusic = function(){};
     window.switchToGameMusic = function(){};
   }
