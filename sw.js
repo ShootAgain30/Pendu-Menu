@@ -1,4 +1,4 @@
-const CACHE = 'pendu-v1.2.2';
+const CACHE = 'pendu-v1.2.3';
 const FILES = [
   './',
   'index.html',
@@ -46,6 +46,24 @@ self.addEventListener('fetch', function(e) {
     );
     return;
   }
+
+  // codes.js : toujours essayer le réseau en premier, cache en fallback
+  if (e.request.url.includes('codes.js')) {
+    e.respondWith(
+      fetch(new Request(e.request, { cache: 'reload' }))
+        .then(function(response) {
+          return caches.open(CACHE).then(function(cache) {
+            cache.put(e.request, response.clone());
+            return response;
+          });
+        })
+        .catch(function() {
+          return caches.match(e.request);
+        })
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request, { ignoreSearch: true, ignoreVary: true })
       .then(function(response) {
