@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <link rel="manifest" href="manifest.json">
-<script src="codes.js"></script>
 <meta name="theme-color" content="#0f0c1a">
 <title>Le Pendu</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -136,94 +135,3 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
 .back-menu-btn:active { transform:scale(0.95); background:rgba(255,255,255,0.1); }
 
 /* ── OVERLAY ── */
-.motmagique-gif { width:220px; max-width:80vw; border-radius:8px; animation:bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
-.motmagique-gif.hidden { display:none; }
-.overlay { position:fixed; inset:0; background:rgba(15,12,26,0.93); backdrop-filter:blur(12px); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:50; gap:20px; padding:32px; text-align:center; transition:opacity 0.4s; }
-.overlay.hidden { opacity:0; pointer-events:none; }
-.overlay-emoji { font-size:4rem; animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1); }
-@keyframes bounceIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
-.overlay-title { font-family:'Bebas Neue',sans-serif; font-size:3rem; letter-spacing:0.1em; line-height:1; }
-.overlay-title.win  { color:var(--accent);  text-shadow:0 0 40px rgba(232,255,71,0.5); }
-.overlay-title.lose { color:var(--accent2); text-shadow:0 0 40px rgba(255,71,87,0.5); }
-.overlay-word { font-family:'DM Serif Display',serif; font-style:italic; font-size:1.4rem; color:var(--muted); }
-.overlay-word span { color:var(--text); font-style:normal; }
-.play-again-btn { background:var(--accent); color:var(--bg); border:none; padding:14px 40px; font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; box-shadow:0 0 30px rgba(232,255,71,0.3); }
-.play-again-btn:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(232,255,71,0.5); }
-.menu-btn { background:transparent; border:1px solid var(--border); color:var(--muted); padding:10px 30px; font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; }
-.menu-btn:hover { border-color:var(--muted); color:var(--text); }
-</style>
-</head>
-<body>
-
-<!-- ═══════════ ECRAN CODE ═══════════ -->
-<div id="code-screen">
-  <div class="menu-bg"></div>
-  <div class="code-logo">LE PENDU</div>
-  <div class="code-subtitle">🔒 Accès privé — identifiez-vous</div>
-  <div class="code-input-wrap">
-    <input class="code-input" id="code-prenom" type="text" placeholder="Prénom" inputmode="text" autocomplete="off">
-    <input class="code-input" id="code-tel" type="tel" placeholder="Numéro de téléphone" inputmode="numeric" autocomplete="off">
-    <div class="code-error" id="code-error"></div>
-    <button class="code-submit" onclick="validerCode()">ENTRER</button>
-  </div>
-</div>
-
-<!-- ═══════════ MENU ═══════════ -->
-<div id="menu-screen" class="hidden">
-  <div class="menu-bg"></div>
-  <div class="highscore-bar">🏆 High Score&nbsp;: <span id="hs-display">0</span></div>
-  <div class="menu-logo">LE PENDU</div>
-  <div class="menu-gallows">
-    <svg width="120" height="90" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="155" x2="200" y2="155" stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
-      <line x1="60" y1="155" x2="60"  y2="10"  stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
-      <line x1="60" y1="10"  x2="140" y2="10"  stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
-      <line x1="140" y1="10" x2="140" y2="30"  stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3"/>
-      <circle cx="140" cy="44" r="14" stroke="rgba(232,255,71,0.4)" stroke-width="2.5"/>
-      <line x1="140" y1="58"  x2="140" y2="100" stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="140" y1="70"  x2="118" y2="90"  stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="140" y1="70"  x2="162" y2="90"  stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="140" y1="100" x2="118" y2="130" stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="140" y1="100" x2="162" y2="130" stroke="rgba(232,255,71,0.4)" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>
-  </div>
-  <div class="menu-section-title">Difficulté</div>
-  <div class="diff-group">
-    <button class="diff-btn active-easy" id="btn-easy"   onclick="setDiff('easy')">Facile</button>
-    <button class="diff-btn"             id="btn-normal" onclick="setDiff('normal')">Normal</button>
-    <button class="diff-btn"             id="btn-hard"   onclick="setDiff('hard')">Difficile</button>
-  </div>
-  <div class="menu-section-title">Options</div>
-  <div class="toggle-row" onclick="toggleHints()">
-    <span class="toggle-label">💡 Indices</span>
-    <div class="toggle-switch on" id="hint-switch"></div>
-  </div>
-  <button class="play-btn" onclick="startGame()">▶ JOUER</button>
- <button class="menu-sound-btn" id="menu-sound-btn" onclick="toggleSound()">🔊 Son ON</button>
-<div class="signature" style="position:absolute;bottom:10px;right:12px;font-size:4vw;color:#444;font-style:italic;">Développé par Bernard V — <span id="version-display" style="color:var(--accent3)">v1.1.6</span></div>
-</div>
-
-<!-- ═══════════ JEU ═══════════ -->
-<div class="app">
-  <div class="header">
-    <div style="display:flex;align-items:center;gap:6px">
-      <div class="game-title">LE PENDU</div>
-      <span class="diff-badge easy" id="diff-badge">Facile</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <button class="back-menu-btn" onclick="goToMenu()">☰ Menu</button>
-      <div class="score-badge">
-        <span class="score-label">Score</span>
-        <span class="score-val" id="score">0</span>
-      </div>
-    </div>
-  </div>
-  <div class="category-pill">
-    <div class="cat-dot"></div>
-    <span id="category-label">—</span>
-  </div>
-  <div class="gallows-wrap">
-    <svg id="gallows-svg" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="155" x2="200" y2="155" stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
-      <line x1="60" y1="155" x2="60"  y2="10"  stroke="rgba(255,255,255,0.15)" stroke-width="3" stroke-linecap="round"/>
-      <line x1="60" y1="10"  x2="140" y2="10"  stroke="rgba(255,255,255,0.15)" stroke-width="3" str
