@@ -5,6 +5,8 @@ const FILES = [
   'manifest.json',
   'icon-192.png',
   'icon-512.png',
+  'Menu.png',
+  'Game.png',
   '01.mp3',
   '02.mp3',
   '03.mp3',
