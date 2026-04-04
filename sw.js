@@ -1,4 +1,4 @@
-const CACHE = 'pendu-v1.2.9';
+const CACHE = 'pendu-v1.3.0';
 const FILES = [
   './',
   'index.html',
