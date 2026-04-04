@@ -77,14 +77,10 @@ body::before {
   position: fixed; inset: 0; z-index: 200;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 32px 24px;
-  background: var(--bg);
+  background: linear-gradient(rgba(15,12,26,0.82), rgba(15,12,26,0.82)), url('Menu.png') center center / cover no-repeat;
   transition: opacity 0.5s, transform 0.5s;
 }
-#menu-screen::before {
-  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background: url('Menu.png') center center / cover no-repeat;
-  opacity: 0.18;
-}
+#menu-screen::before { display:none; }
 #menu-screen.hidden { opacity: 0; pointer-events: none; transform: scale(0.96); }
 .menu-bg {
   position: absolute; inset: 0; pointer-events: none;
@@ -185,10 +181,9 @@ body::before {
   display: flex; flex-direction: column; align-items: center;
   padding: 8px 12px 4px; max-width: 480px; margin: 0 auto;
 }
-.app::before {
-  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
-  background: url('Game.png') center center / cover no-repeat;
-  opacity: 0.18;
+.app::before { display:none; }
+body.game-active {
+  background: linear-gradient(rgba(15,12,26,0.82), rgba(15,12,26,0.82)), url('Game.png') center center / cover no-repeat fixed;
 }
 .header { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-shrink: 0; }
 .score-badge { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
@@ -654,6 +649,7 @@ function startGame() {
   else if (currentDiff === 'normal') pickWord = makeQueue(WORDS_NORMAL);
   else                               pickWord = makeQueue(WORDS_HARD);
   document.getElementById('menu-screen').classList.add('hidden');
+  document.body.classList.add('game-active');
   switchToGameMusic();
   S = 0; winsCount = 0; motCount = 0;
   document.getElementById('score').textContent = '0';
@@ -663,6 +659,7 @@ function startGame() {
 function goToMenu() {
   stopMotSfx();
   S = 0; motCount = 0;
+  document.body.classList.remove('game-active');
   document.getElementById('overlay').classList.add('hidden');
   document.getElementById('menu-screen').classList.remove('hidden');
   var hs = parseInt(localStorage.getItem('pendu-hs') || '0');
