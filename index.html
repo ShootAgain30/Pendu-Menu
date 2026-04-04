@@ -83,7 +83,7 @@ body::before {
 #menu-screen::after {
   content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
   background: url('Menu.png') center center / cover no-repeat;
-  opacity: 0.18;
+  opacity: 0.45;
 }
 #menu-screen > * { position:relative; z-index:1; }
 #menu-screen.hidden { opacity: 0; pointer-events: none; transform: scale(0.96); }
@@ -183,7 +183,7 @@ body::before {
 body.game-active::after {
   content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
   background: url('Game.png') center center / cover no-repeat;
-  opacity: 0.18;
+  opacity: 0.45;
 }
 
   /* ── JEU ── */
@@ -192,7 +192,7 @@ body.game-active::after {
   display: flex; flex-direction: column; align-items: center;
   padding: 8px 12px 4px; max-width: 480px; margin: 0 auto;
 }
-.header { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-shrink: 0; }
+.header { width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; flex-shrink:0; background:rgba(15,12,26,0.6); border-radius:10px; padding:6px 10px; }
 .score-badge { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
 .score-label { font-family:'DM Mono',monospace; font-size:0.55rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
 .score-val { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--accent3); letter-spacing:0.1em; line-height:1; }
@@ -202,7 +202,7 @@ body.game-active::after {
 .diff-badge.hard   { background:rgba(255,71,87,0.12);  color:var(--accent2); border:1px solid rgba(255,71,87,0.3); }
 .category-pill { display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border); padding:4px 14px; border-radius:100px; font-family:'DM Mono',monospace; font-size:1.05rem; color:var(--text); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px; flex-shrink:0; }
 .cat-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
-.gallows-wrap { width:100%; display:flex; justify-content:center; margin-bottom:4px; flex-shrink:0; }
+.gallows-wrap { width:100%; display:flex; justify-content:center; margin-bottom:4px; flex-shrink:0; background:rgba(15,12,26,0.5); border-radius:10px; padding:4px 0; }
 #gallows-svg { width:180px; height:130px; }
 @keyframes gallowsShake {
   0%,100% { transform:translateX(0); }
@@ -220,7 +220,7 @@ body.game-active::after {
 .attempts-bar { display:flex; gap:6px; margin-bottom:6px; flex-shrink:0; }
 .attempt-dot { width:8px; height:8px; border-radius:50%; background:var(--accent2); box-shadow:0 0 8px var(--accent2); transition:all 0.3s; }
 .attempt-dot.used { background:rgba(255,255,255,0.1); box-shadow:none; }
-.word-display { display:flex; gap:8px; flex-wrap:nowrap; justify-content:center; align-items:center; width:100%; margin-bottom:6px; min-height:44px; flex-shrink:0; }
+.word-display { display:flex; gap:8px; flex-wrap:nowrap; justify-content:center; align-items:center; width:100%; margin-bottom:6px; min-height:44px; flex-shrink:0; background:rgba(15,12,26,0.5); border-radius:10px; padding:6px 4px; }
 .word-display.medium { gap:5px; }
 .word-display.long   { gap:3px; }
 .letter-slot { display:flex; flex-direction:column; align-items:center; gap:3px; }
