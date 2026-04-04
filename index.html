@@ -174,6 +174,10 @@ body::before {
 .mot-count { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
 .mot-count span { color:var(--accent3); font-family:'Bebas Neue',sans-serif; font-size:0.9rem; }
 
+body.game-active {
+  background: linear-gradient(rgba(15,12,26,0.82), rgba(15,12,26,0.82)), url('Game.png') center center / cover no-repeat fixed;
+}
+
   /* ── JEU ── */
 .app {
   position: relative; z-index: 1; height: 100dvh;
@@ -560,6 +564,7 @@ function startGame() {
   else if (currentDiff === 'normal') pickWord = makeQueue(WORDS_NORMAL);
   else                               pickWord = makeQueue(WORDS_HARD);
   document.getElementById('menu-screen').classList.add('hidden');
+  document.body.classList.add('game-active');
   switchToGameMusic();
   S = 0; winsCount = 0; motCount = 0;
   document.getElementById('score').textContent = '0';
@@ -568,7 +573,9 @@ function startGame() {
 
 function goToMenu() {
   stopMotSfx();
+  stopTimer();
   S = 0; motCount = 0;
+  document.body.classList.remove('game-active');
   document.getElementById('overlay').classList.add('hidden');
   document.getElementById('menu-screen').classList.remove('hidden');
   var hs = parseInt(localStorage.getItem('pendu-hs') || '0');
