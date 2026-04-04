@@ -80,6 +80,12 @@ body::before {
   background: var(--bg);
   transition: opacity 0.5s, transform 0.5s;
 }
+#menu-screen::after {
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background: url('Menu.png') center center / cover no-repeat;
+  opacity: 0.18;
+}
+#menu-screen > * { position:relative; z-index:1; }
 #menu-screen.hidden { opacity: 0; pointer-events: none; transform: scale(0.96); }
 .menu-bg {
   position: absolute; inset: 0; pointer-events: none;
@@ -174,8 +180,10 @@ body::before {
 .mot-count { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
 .mot-count span { color:var(--accent3); font-family:'Bebas Neue',sans-serif; font-size:0.9rem; }
 
-body.game-active {
-  background: linear-gradient(rgba(15,12,26,0.82), rgba(15,12,26,0.82)), url('Game.png') center center / cover no-repeat fixed;
+body.game-active::after {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background: url('Game.png') center center / cover no-repeat;
+  opacity: 0.18;
 }
 
   /* ── JEU ── */
@@ -238,7 +246,7 @@ body.game-active {
 }
 .keyboard { width:100%; display:flex; flex-direction:column; gap:5px; }
 .key-row { display:flex; justify-content:center; gap:4px; }
-.key { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.18); color:var(--text); font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:500; width:34px; height:40px; border-radius:6px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; -webkit-user-select:none; user-select:none; }
+.key { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.18); color:var(--text); font-family:'DM Mono',monospace; font-size:1.2rem; font-weight:500; width:34px; height:40px; border-radius:6px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; -webkit-user-select:none; user-select:none; }
 .key::after { content:''; position:absolute; inset:0; background:var(--accent); opacity:0; transition:opacity 0.1s; }
 .key:active::after { opacity:0.15; }
 .key:not([disabled]):hover { border-color:rgba(232,255,71,0.4); color:var(--accent); transform:translateY(-1px); }
