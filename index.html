@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#0f0c1a">
 <title>Le Pendu</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <style>
 :root {
   --bg: #0f0c1a;
@@ -272,6 +273,34 @@ body.game-active::after {
 .play-again-btn:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(232,255,71,0.5); }
 .menu-btn { background:transparent; border:1px solid var(--border); color:var(--muted); padding:10px 30px; font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; }
 .menu-btn:hover { border-color:var(--muted); color:var(--text); }
+
+/* ── MULTI ── */
+#multi-screen, #multi-host-screen, #multi-join-screen, #multi-lobby-screen {
+  position:fixed; inset:0; z-index:300; display:none; flex-direction:column;
+  align-items:center; justify-content:center; padding:32px 24px;
+  background:var(--bg); overflow-y:auto;
+}
+#multi-screen.visible, #multi-host-screen.visible, #multi-join-screen.visible, #multi-lobby-screen.visible { display:flex; }
+.multi-title { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.15em; color:var(--accent); margin-bottom:24px; }
+.multi-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:var(--text); font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:0.15em; padding:14px 32px; border-radius:8px; cursor:pointer; transition:all 0.2s; width:100%; max-width:300px; margin-bottom:12px; }
+.multi-btn:active { transform:scale(0.97); }
+.multi-btn.primary { background:rgba(232,255,71,0.15); border-color:var(--accent); color:var(--accent); }
+.multi-input { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15); color:var(--text); font-family:'DM Mono',monospace; font-size:1.3rem; letter-spacing:0.15em; text-align:center; width:100%; max-width:300px; padding:14px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; margin-bottom:12px; }
+.multi-input:focus { border-color:var(--accent); }
+.multi-label { font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; width:100%; max-width:300px; text-align:left; }
+.multi-status { font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--accent3); letter-spacing:0.1em; text-align:center; margin-top:8px; min-height:20px; }
+.multi-code { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; letter-spacing:0.4em; color:var(--accent); text-shadow:0 0 30px rgba(232,255,71,0.4); margin:12px 0; }
+.multi-back { background:none; border:1px solid rgba(255,255,255,0.15); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; padding:8px 16px; border-radius:100px; cursor:pointer; margin-bottom:20px; align-self:flex-start; }
+.multi-toggle-row { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:300px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:12px 16px; border-radius:8px; margin-bottom:10px; cursor:pointer; }
+.multi-toggle-label { font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text); }
+.multi-player-row { display:flex; align-items:center; gap:10px; width:100%; max-width:300px; padding:10px 14px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; margin-bottom:8px; }
+.multi-player-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.multi-player-name { font-family:'DM Mono',monospace; font-size:0.85rem; flex:1; color:var(--text); }
+.multi-player-badge { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--accent3); letter-spacing:0.1em; }
+.multi-score-bar { width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 14px; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.multi-score-name { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; }
+.multi-score-val { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--accent3); }
+.multi-score-goal { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -320,6 +349,7 @@ body.game-active::after {
     <div class="toggle-switch on" id="hint-switch"></div>
   </div>
   <button class="play-btn" onclick="startGame()">▶ JOUER</button>
+  <button class="menu-sound-btn" id="menu-sound-multi" onclick="showMultiMenu()" style="margin-top:8px;background:rgba(72,219,251,0.08);border-color:rgba(72,219,251,0.35);color:var(--accent3);">⚔ MODE MULTIJOUEUR</button>
   <button class="menu-sound-btn" id="menu-sound-btn" onclick="toggleSound()">🔊 Son ON</button>
   <div style="position:absolute;bottom:10px;right:12px;font-size:4vw;color:#444;font-style:italic;">Développé par Bernard V — <span id="app-version" style="color:var(--accent3)">…</span></div>
 </div>
@@ -356,6 +386,16 @@ body.game-active::after {
     </svg>
   </div>
   <div class="attempts-bar" id="attempts-bar"></div>
+  <div id="multi-score-zone" style="display:none;width:100%;flex-shrink:0;margin-bottom:4px;">
+    <div class="multi-score-bar">
+      <span class="multi-score-name" id="multi-score-me-name">Moi</span>
+      <span><span class="multi-score-val" id="multi-score-me">0</span><span class="multi-score-goal" id="multi-score-goal"> / 5</span></span>
+    </div>
+    <div class="multi-score-bar">
+      <span class="multi-score-name" id="multi-score-opp-name">Adversaire</span>
+      <span class="multi-score-val" id="multi-score-opp">0</span>
+    </div>
+  </div>
   <div class="timer-val" id="timer-val">90</div>
   <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
   <div class="word-display"  id="word-display"></div>
@@ -367,6 +407,68 @@ body.game-active::after {
     <button id="game-sound-btn" onclick="toggleSound()">🔊 Son ON</button>
     <button id="next-btn" onclick="nextTrack()">⏭ Next</button>
   </div>
+</div>
+
+<!-- ═══════════ MULTI MENU ═══════════ -->
+<div id="multi-screen">
+  <button class="multi-back" onclick="hideMultiScreens();document.getElementById('menu-screen').classList.remove('hidden');">← Retour</button>
+  <div class="multi-title">MULTIJOUEUR</div>
+  <button class="multi-btn primary" onclick="showScreen_multi('multi-host-screen')">📡 Créer une partie</button>
+  <button class="multi-btn" onclick="showScreen_multi('multi-join-screen')">🔗 Rejoindre une partie</button>
+</div>
+
+<!-- ═══════════ MULTI HOST ═══════════ -->
+<div id="multi-host-screen">
+  <button class="multi-back" onclick="showScreen_multi('multi-screen')">← Retour</button>
+  <div class="multi-title">CRÉER</div>
+  <div class="multi-label">Votre prénom</div>
+  <input class="multi-input" id="host-name" placeholder="Prénom" autocomplete="off">
+  <div class="multi-label">Difficulté</div>
+  <select class="multi-input" id="host-diff" style="font-size:1rem;">
+    <option value="easy">Facile</option>
+    <option value="normal" selected>Normal</option>
+    <option value="hard">Difficile</option>
+  </select>
+  <div class="multi-toggle-row" onclick="toggleMultiHints()">
+    <span class="multi-toggle-label">💡 Indices</span>
+    <div class="toggle-switch on" id="multi-hint-switch"></div>
+  </div>
+  <div class="multi-label">Mots pour gagner (1-10)</div>
+  <input class="multi-input" id="host-goal" type="number" min="1" max="10" value="5" style="font-size:1.3rem;">
+  <button class="multi-btn primary" onclick="startHosting()">📡 Créer la partie</button>
+  <div class="multi-status" id="host-status"></div>
+</div>
+
+<!-- ═══════════ MULTI JOIN ═══════════ -->
+<div id="multi-join-screen">
+  <button class="multi-back" onclick="showScreen_multi('multi-screen')">← Retour</button>
+  <div class="multi-title">REJOINDRE</div>
+  <div class="multi-label">Code de la partie (4 lettres)</div>
+  <input class="multi-input" id="join-code" maxlength="4" placeholder="XXXX" style="text-transform:uppercase;letter-spacing:0.3em;" autocomplete="off">
+  <div class="multi-label">Votre prénom</div>
+  <input class="multi-input" id="join-name" placeholder="Prénom" autocomplete="off">
+  <button class="multi-btn primary" onclick="joinMultiGame()">🔗 Rejoindre</button>
+  <div class="multi-status" id="join-status"></div>
+</div>
+
+<!-- ═══════════ MULTI LOBBY ═══════════ -->
+<div id="multi-lobby-screen">
+  <button class="multi-back" onclick="leaveLobby()">← Quitter</button>
+  <div class="multi-title">SALON</div>
+  <div class="multi-label" style="text-align:center;">Code de la partie</div>
+  <div class="multi-code" id="lobby-code">----</div>
+  <div id="lobby-players-list" style="width:100%;max-width:300px;"></div>
+  <div class="multi-status" id="lobby-status">En attente...</div>
+  <button class="multi-btn primary" id="lobby-start-btn" style="display:none;" onclick="launchMultiGame()">▶ LANCER LA PARTIE</button>
+</div>
+
+<!-- ═══════════ OVERLAY FIN MULTI ═══════════ -->
+<div class="overlay hidden" id="overlay-multi">
+  <div class="overlay-emoji" id="multi-end-emoji"></div>
+  <div class="overlay-title" id="multi-end-title"></div>
+  <div class="overlay-word" id="multi-end-desc"></div>
+  <button class="play-again-btn" id="multi-replay-btn">REJOUER</button>
+  <button class="menu-btn" onclick="quitMultiMode()">✕ QUITTER LE MODE MULTI</button>
 </div>
 
 <!-- ═══════════ OVERLAY ═══════════ -->
@@ -780,7 +882,11 @@ function guess(l) {
     var hs = parseInt(localStorage.getItem('pendu-hs') || '0');
     if (S > hs) localStorage.setItem('pendu-hs', S);
     O=true; winsCount++;
-    setTimeout(function(){ end(true, pts); }, 400);
+    if(isMultiMode) {
+      setTimeout(function(){ multiOnWordWon(); }, 400);
+    } else {
+      setTimeout(function(){ end(true, pts); }, 400);
+    }
   } else if (E >= MAX) {
     stopTimer();
     O=true;
@@ -857,7 +963,308 @@ function render() {
   }
 }
 
-document.getElementById('play-again-btn').addEventListener('click', newGame);
+// ══════════════════════════════════════════════════
+// MULTIJOUEUR PEERJS
+// ══════════════════════════════════════════════════
+var multiPeer = null, multiConn = null;
+var multiIsHost = false;
+var multiHintsEnabled = true;
+var multiMyName = '', multiOppName = '';
+var multiMyWins = 0, multiOppWins = 0;
+var multiGoal = 5;
+var multiDiff = 'normal';
+var multiActive = false;
+var multiCurrentWord = null;
+
+function generateMultiCode() {
+  return Array.from({length:4}, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ'[Math.floor(Math.random()*23)]).join('');
+}
+
+function showMultiMenu() {
+  document.getElementById('menu-screen').classList.add('hidden');
+  showScreen_multi('multi-screen');
+}
+
+function showScreen_multi(id) {
+  ['multi-screen','multi-host-screen','multi-join-screen','multi-lobby-screen'].forEach(function(s) {
+    document.getElementById(s).classList.remove('visible');
+  });
+  document.getElementById(id).classList.add('visible');
+}
+
+function hideMultiScreens() {
+  ['multi-screen','multi-host-screen','multi-join-screen','multi-lobby-screen'].forEach(function(s) {
+    document.getElementById(s).classList.remove('visible');
+  });
+}
+
+function toggleMultiHints() {
+  multiHintsEnabled = !multiHintsEnabled;
+  document.getElementById('multi-hint-switch').className = 'toggle-switch' + (multiHintsEnabled ? ' on' : '');
+}
+
+// ── HÔTE ──
+function startHosting() {
+  var name = document.getElementById('host-name').value.trim();
+  if(!name) { document.getElementById('host-status').textContent = 'Entrez votre prénom'; return; }
+  multiMyName = name;
+  multiDiff = document.getElementById('host-diff').value;
+  multiGoal = parseInt(document.getElementById('host-goal').value) || 5;
+  multiGoal = Math.max(1, Math.min(10, multiGoal));
+
+  document.getElementById('host-status').textContent = 'Connexion...';
+  if(multiPeer) { multiPeer.destroy(); multiPeer = null; }
+
+  var code = generateMultiCode();
+  multiPeer = new Peer('pendu-' + code, { debug:0 });
+  multiIsHost = true;
+
+  multiPeer.on('open', function() {
+    document.getElementById('lobby-code').textContent = code;
+    document.getElementById('lobby-status').textContent = 'En attente d\'un joueur...';
+    document.getElementById('lobby-start-btn').style.display = 'none';
+    renderLobbyPlayers_multi([{name:multiMyName, isHost:true}]);
+    showScreen_multi('multi-lobby-screen');
+  });
+
+  multiPeer.on('connection', function(conn) {
+    multiConn = conn;
+    conn.on('open', function() {
+      conn.on('data', function(data) { handleHostData_multi(data); });
+    });
+  });
+
+  multiPeer.on('error', function(err) {
+    document.getElementById('host-status').textContent = 'Erreur : ' + err.type;
+  });
+}
+
+function handleHostData_multi(data) {
+  if(data.type === 'join') {
+    multiOppName = data.name;
+    renderLobbyPlayers_multi([{name:multiMyName,isHost:true},{name:multiOppName,isHost:false}]);
+    document.getElementById('lobby-status').textContent = multiOppName + ' a rejoint !';
+    document.getElementById('lobby-start-btn').style.display = 'block';
+    // Confirmer au client
+    multiConn.send({type:'joined', hostName:multiMyName, diff:multiDiff, hints:multiHintsEnabled, goal:multiGoal});
+  }
+  if(data.type === 'word_won') {
+    multiOppWins++;
+    updateMultiScoreUI();
+    if(multiOppWins >= multiGoal) {
+      endMultiGame(false, multiOppName);
+    }
+  }
+  if(data.type === 'ready_next') {
+    // Les deux sont prêts pour le mot suivant
+    sendNewWord();
+  }
+}
+
+// ── CLIENT ──
+function joinMultiGame() {
+  var code = document.getElementById('join-code').value.toUpperCase().trim();
+  var name = document.getElementById('join-name').value.trim();
+  if(code.length !== 4) { document.getElementById('join-status').textContent = 'Code invalide (4 lettres)'; return; }
+  if(!name) { document.getElementById('join-status').textContent = 'Entrez votre prénom'; return; }
+  multiMyName = name;
+
+  document.getElementById('join-status').textContent = 'Connexion...';
+  if(multiPeer) { multiPeer.destroy(); multiPeer = null; }
+
+  multiPeer = new Peer(undefined, {debug:0});
+  multiIsHost = false;
+
+  multiPeer.on('open', function() {
+    var conn = multiPeer.connect('pendu-' + code, {reliable:true});
+    multiConn = conn;
+    conn.on('open', function() {
+      conn.send({type:'join', name:name});
+      document.getElementById('join-status').textContent = 'Connecté ! En attente...';
+    });
+    conn.on('data', function(data) { handleClientData_multi(data); });
+    conn.on('error', function() {
+      document.getElementById('join-status').textContent = 'Erreur de connexion.';
+    });
+  });
+
+  multiPeer.on('error', function(err) {
+    var msg = err.type==='peer-unavailable' ? 'Code introuvable.' : 'Impossible de se connecter.';
+    document.getElementById('join-status').textContent = msg;
+  });
+}
+
+function handleClientData_multi(data) {
+  if(data.type === 'joined') {
+    multiOppName = data.hostName;
+    multiDiff = data.diff;
+    multiHintsEnabled = data.hints;
+    multiGoal = data.goal;
+    renderLobbyPlayers_multi([{name:multiOppName,isHost:true},{name:multiMyName,isHost:false}]);
+    document.getElementById('lobby-status').textContent = 'En attente du lancement...';
+    document.getElementById('lobby-start-btn').style.display = 'none';
+    showScreen_multi('multi-lobby-screen');
+  }
+  if(data.type === 'game_start') {
+    hideMultiScreens();
+    startMultiGameLocal(data.word);
+  }
+  if(data.type === 'new_word') {
+    startMultiGameLocal(data.word);
+  }
+  if(data.type === 'opp_won') {
+    multiOppWins++;
+    updateMultiScoreUI();
+    if(multiOppWins >= multiGoal) {
+      endMultiGame(false, multiOppName);
+    }
+  }
+  if(data.type === 'game_over') {
+    endMultiGame(data.iWon, data.iWon ? multiMyName : multiOppName);
+  }
+}
+
+// ── LANCEMENT ──
+function launchMultiGame() {
+  multiMyWins = 0; multiOppWins = 0;
+  multiActive = true;
+  // Hôte choisit le mot et envoie
+  sendNewWord(true);
+}
+
+function sendNewWord(isFirst) {
+  var wordList = currentDiff === 'easy' ? WORDS_EASY : (currentDiff === 'normal' ? WORDS_NORMAL : WORDS_HARD);
+  // Utiliser la difficulté choisie pour le multi
+  var list = multiDiff === 'easy' ? WORDS_EASY : (multiDiff === 'normal' ? WORDS_NORMAL : WORDS_HARD);
+  var entry = list[Math.floor(Math.random() * list.length)];
+  multiCurrentWord = entry;
+
+  if(isFirst) {
+    multiConn.send({type:'game_start', word:entry});
+    hideMultiScreens();
+    startMultiGameLocal(entry);
+  } else {
+    multiConn.send({type:'new_word', word:entry});
+    startMultiGameLocal(entry);
+  }
+}
+
+function startMultiGameLocal(entry) {
+  multiActive = true;
+  stopTimer();
+  stopMotSfx();
+  document.body.classList.add('game-active');
+
+  // Configurer le jeu avec le mot reçu
+  W = entry.word.toUpperCase(); H = entry.hint; C = entry.cat;
+  G_multi = new Set(); E = 0; O = false;
+  hintsEnabled = multiHintsEnabled;
+
+  // Afficher la barre de score multi
+  document.getElementById('multi-score-zone').style.display = 'block';
+  document.getElementById('multi-score-me-name').textContent = multiMyName;
+  document.getElementById('multi-score-opp-name').textContent = multiOppName;
+  updateMultiScoreUI();
+
+  document.getElementById('menu-screen').classList.add('hidden');
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('overlay-multi').classList.add('hidden');
+
+  // Override de guess pour le mode multi
+  isMultiMode = true;
+  motCount++;
+  document.getElementById('mot-count').textContent = motCount;
+
+  render();
+  startTimer();
+}
+
+var isMultiMode = false;
+var G_multi = new Set();
+
+function multiOnWordWon() {
+  multiMyWins++;
+  updateMultiScoreUI();
+  // Notifier l'adversaire
+  if(multiConn) multiConn.send({type: multiIsHost ? 'word_won' : 'word_won'});
+  // Aussi notifier que l'hôte a gagné un mot si client
+  if(!multiIsHost && multiConn) multiConn.send({type:'opp_won'});
+  if(multiIsHost && multiConn) multiConn.send({type:'opp_won'});
+
+  if(multiMyWins >= multiGoal) {
+    // J'ai gagné
+    if(multiConn) multiConn.send({type:'game_over', iWon:false});
+    endMultiGame(true, multiMyName);
+  } else {
+    // Mot suivant
+    if(multiIsHost) {
+      sendNewWord(false);
+    }
+    // Le client attend le nouveau mot de l'hôte
+  }
+}
+
+function updateMultiScoreUI() {
+  document.getElementById('multi-score-me').textContent = multiMyWins;
+  document.getElementById('multi-score-opp').textContent = multiOppWins;
+  document.getElementById('multi-score-goal').textContent = ' / ' + multiGoal;
+}
+
+function endMultiGame(iWon, winnerName) {
+  stopTimer();
+  stopMotSfx();
+  isMultiMode = false;
+  document.getElementById('multi-end-emoji').textContent = iWon ? '🏆' : '💀';
+  document.getElementById('multi-end-title').textContent = iWon ? 'VICTOIRE !' : 'DÉFAITE !';
+  document.getElementById('multi-end-title').className = 'overlay-title ' + (iWon ? 'win' : 'lose');
+  document.getElementById('multi-end-desc').innerHTML = iWon
+    ? 'Bravo, vous avez gagné !'
+    : winnerName + ' a gagné — vous avez perdu !';
+  document.getElementById('overlay-multi').classList.remove('hidden');
+
+  document.getElementById('multi-replay-btn').onclick = function() {
+    document.getElementById('overlay-multi').classList.add('hidden');
+    multiMyWins = 0; multiOppWins = 0; motCount = 0;
+    if(multiIsHost) {
+      sendNewWord(true);
+    }
+    // Client attend le nouveau mot
+  };
+}
+
+function quitMultiMode() {
+  document.getElementById('overlay-multi').classList.add('hidden');
+  document.getElementById('multi-score-zone').style.display = 'none';
+  isMultiMode = false;
+  multiActive = false;
+  if(multiPeer) { multiPeer.destroy(); multiPeer = null; }
+  multiConn = null;
+  document.body.classList.remove('game-active');
+  goToMenu();
+}
+
+function renderLobbyPlayers_multi(players) {
+  var container = document.getElementById('lobby-players-list');
+  container.innerHTML = '';
+  players.forEach(function(p) {
+    var div = document.createElement('div');
+    div.className = 'multi-player-row';
+    div.innerHTML = '<div class="multi-player-dot" style="background:' + (p.isHost ? 'var(--accent)' : 'var(--accent3)') + '"></div>'
+      + '<span class="multi-player-name">' + p.name + '</span>'
+      + '<span class="multi-player-badge">' + (p.isHost ? 'Hôte' : 'Joueur') + '</span>';
+    container.appendChild(div);
+  });
+}
+
+function leaveLobby() {
+  if(multiPeer) { multiPeer.destroy(); multiPeer = null; }
+  multiConn = null;
+  hideMultiScreens();
+  showScreen_multi('multi-screen');
+}
+
+// ── Intercepter la victoire en mode multi ──
+
 document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); if(/^[A-Z]$/.test(l)) guess(l); });
 
 (function() {
