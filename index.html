@@ -6,7 +6,6 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f0c1a">
 <title>Le Pendu</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <style>
 :root {
@@ -24,7 +23,7 @@ html, body {
   height: 100%;
   background: var(--bg);
   color: var(--text);
-  font-family: 'DM Serif Display', serif;
+  font-family: Georgia, 'Times New Roman', serif;
   overflow: hidden;
   touch-action: manipulation;
 }
@@ -63,14 +62,14 @@ body::before {
 /* ── ECRAN CODE ── */
 #code-screen { position:fixed; inset:0; z-index:500; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px; background:var(--bg); }
 #code-screen.hidden { display:none; }
-.code-logo { font-family:'Bebas Neue',sans-serif; font-size:clamp(3rem,15vw,4.5rem); letter-spacing:0.18em; color:var(--accent); text-shadow:0 0 60px rgba(232,255,71,0.35); line-height:1; text-align:center; margin-bottom:8px; display:flex; align-items:flex-start; }
-.code-subtitle { font-family:'DM Mono',monospace; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:40px; text-align:center; }
+.code-logo { font-family:'Impact','Arial Black',Arial,sans-serif; font-size:clamp(3rem,15vw,4.5rem); letter-spacing:0.18em; color:var(--accent); text-shadow:0 0 60px rgba(232,255,71,0.35); line-height:1; text-align:center; margin-bottom:8px; display:flex; align-items:flex-start; }
+.code-subtitle { font-family:'Courier New',Courier,monospace; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:40px; text-align:center; }
 .code-input-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; width:100%; max-width:280px; }
-.code-input { background:var(--card); border:2px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:1.4rem; letter-spacing:0.1em; text-align:center; width:100%; padding:16px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; }
+.code-input { background:var(--card); border:2px solid var(--border); color:var(--text); font-family:'Courier New',Courier,monospace; font-size:1.4rem; letter-spacing:0.1em; text-align:center; width:100%; padding:16px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; }
 .code-input:focus { border-color:var(--accent); }
 .code-input.error { border-color:var(--accent2); animation:shake 0.4s ease; }
-.code-error { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--accent2); letter-spacing:0.1em; min-height:20px; text-align:center; }
-.code-submit { background:var(--accent); color:var(--bg); border:none; padding:14px 50px; font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.2em; cursor:pointer; border-radius:6px; transition:all 0.2s; box-shadow:0 0 30px rgba(232,255,71,0.3); width:100%; }
+.code-error { font-family:'Courier New',Courier,monospace; font-size:0.7rem; color:var(--accent2); letter-spacing:0.1em; min-height:20px; text-align:center; }
+.code-submit { background:var(--accent); color:var(--bg); border:none; padding:14px 50px; font-family:'Impact','Arial Black',Arial,sans-serif; font-size:1.4rem; letter-spacing:0.2em; cursor:pointer; border-radius:6px; transition:all 0.2s; box-shadow:0 0 30px rgba(232,255,71,0.3); width:100%; }
 .code-submit:active { transform:scale(0.97); }
 
 /* ── MENU ── */
@@ -95,7 +94,7 @@ body::before {
     radial-gradient(ellipse 50% 60% at 80% 80%, rgba(72,219,251,0.06) 0%, transparent 60%);
 }
 .menu-logo {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Impact', 'Arial Black', Arial, sans-serif;
   font-size: clamp(3rem, 15vw, 5rem);
   letter-spacing: 0.18em; color: var(--accent);
   text-shadow: 0 0 60px rgba(232,255,71,0.35), 0 0 120px rgba(232,255,71,0.15);
@@ -111,7 +110,7 @@ body::before {
 .menu-gallows { margin: 12px 0; position: relative; z-index: 1; animation: float 3s ease-in-out infinite; }
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
 .menu-section-title {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
   color: rgba(240,235,255,0.7); margin-bottom: 10px; margin-top: 20px;
   position: relative; z-index: 1;
@@ -119,7 +118,7 @@ body::before {
 .diff-group { display: flex; gap: 10px; position: relative; z-index: 1; }
 .diff-btn {
   background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(240,235,255,0.8); font-family: 'Bebas Neue', sans-serif;
+  color: rgba(240,235,255,0.8); font-family: 'Impact', 'Arial Black', Arial, sans-serif;
   font-size: 1.1rem; letter-spacing: 0.12em;
   padding: 10px 18px; border-radius: 6px; cursor: pointer;
   transition: all 0.2s; position: relative; overflow: hidden;
@@ -138,7 +137,7 @@ body::before {
   transition: all 0.2s; width: 100%; max-width: 300px; justify-content: space-between;
 }
 .toggle-row:active { transform: scale(0.98); }
-.toggle-label { font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,235,255,0.9); }
+.toggle-label { font-family: 'Courier New', Courier, monospace; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,235,255,0.9); }
 .toggle-switch {
   width: 42px; height: 24px; border-radius: 12px;
   background: rgba(255,255,255,0.1); border: 1px solid var(--border);
@@ -153,7 +152,7 @@ body::before {
 .toggle-switch.on::after { background: var(--accent); left: 20px; box-shadow: 0 0 8px rgba(232,255,71,0.5); }
 .play-btn {
   background: var(--accent); color: var(--bg); border: none;
-  padding: 16px 60px; font-family: 'Bebas Neue', sans-serif;
+  padding: 16px 60px; font-family: 'Impact', 'Arial Black', Arial, sans-serif;
   font-size: 1.6rem; letter-spacing: 0.2em; cursor: pointer;
   border-radius: 6px; transition: all 0.25s;
   box-shadow: 0 0 40px rgba(232,255,71,0.35);
@@ -167,19 +166,19 @@ body::before {
 .play-btn:active { transform: scale(0.96); }
 .menu-sound-btn {
   background: rgba(232,255,71,0.08); border: 1px solid rgba(232,255,71,0.35);
-  color: #e8ff47; font-family: 'DM Mono', monospace;
+  color: #e8ff47; font-family: 'Courier New', Courier, monospace;
   font-size: 0.65rem; letter-spacing: 0.1em;
   padding: 7px 20px; border-radius: 100px;
   cursor: pointer; transition: all 0.2s;
   margin-top: 10px; position: relative; z-index: 1;
 }
 .menu-sound-btn:active { transform: scale(0.95); }
-.highscore-bar { position:relative; z-index:1; width:100%; text-align:right; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(240,235,255,0.7); margin-bottom:4px; }
-.highscore-bar span { color:var(--accent); font-size:0.85rem; font-family:'Bebas Neue',sans-serif; letter-spacing:0.1em; }
-.back-menu-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; padding:6px 12px; border-radius:100px; cursor:pointer; transition:all 0.2s; }
+.highscore-bar { position:relative; z-index:1; width:100%; text-align:right; font-family:'Courier New',Courier,monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(240,235,255,0.7); margin-bottom:22px; }
+.highscore-bar span { color:var(--accent); font-size:0.85rem; font-family:'Impact','Arial Black',Arial,sans-serif; letter-spacing:0.1em; }
+.back-menu-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); font-family:'Courier New',Courier,monospace; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; padding:6px 12px; border-radius:100px; cursor:pointer; transition:all 0.2s; }
 .back-menu-btn:active { transform:scale(0.95); background:rgba(255,255,255,0.1); }
-.mot-count { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
-.mot-count span { color:var(--accent3); font-family:'Bebas Neue',sans-serif; font-size:0.9rem; }
+.mot-count { font-family:'Courier New',Courier,monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+.mot-count span { color:var(--accent3); font-family:'Impact','Arial Black',Arial,sans-serif; font-size:0.9rem; }
 
 body.game-active::after {
   content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
@@ -195,13 +194,13 @@ body.game-active::after {
 }
 .header { width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; flex-shrink:0; background:rgba(15,12,26,0.6); border-radius:10px; padding:6px 10px; }
 .score-badge { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
-.score-label { font-family:'DM Mono',monospace; font-size:0.55rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
-.score-val { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--accent3); letter-spacing:0.1em; line-height:1; }
-.diff-badge { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.15em; text-transform:uppercase; padding:3px 8px; border-radius:100px; margin-left:8px; }
+.score-label { font-family:'Courier New',Courier,monospace; font-size:0.55rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; }
+.score-val { font-family:'Impact','Arial Black',Arial,sans-serif; font-size:1.4rem; color:var(--accent3); letter-spacing:0.1em; line-height:1; }
+.diff-badge { font-family:'Courier New',Courier,monospace; font-size:0.55rem; letter-spacing:0.15em; text-transform:uppercase; padding:3px 8px; border-radius:100px; margin-left:8px; }
 .diff-badge.easy   { background:rgba(72,219,251,0.12); color:var(--accent3); border:1px solid rgba(72,219,251,0.3); }
 .diff-badge.normal { background:rgba(232,255,71,0.12); color:var(--accent);  border:1px solid rgba(232,255,71,0.3); }
 .diff-badge.hard   { background:rgba(255,71,87,0.12);  color:var(--accent2); border:1px solid rgba(255,71,87,0.3); }
-.category-pill { display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border); padding:4px 14px; border-radius:100px; font-family:'DM Mono',monospace; font-size:1.05rem; color:var(--text); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px; flex-shrink:0; }
+.category-pill { display:inline-flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border); padding:4px 14px; border-radius:100px; font-family:'Courier New',Courier,monospace; font-size:1.05rem; color:var(--text); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px; flex-shrink:0; }
 .cat-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
 .gallows-wrap { width:100%; display:flex; justify-content:center; margin-bottom:4px; flex-shrink:0; background:rgba(15,12,26,0.5); border-radius:10px; padding:4px 0; }
 #gallows-svg { width:180px; height:130px; }
@@ -216,7 +215,7 @@ body.game-active::after {
 .timer-bar { width:100%; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; margin-bottom:4px; flex-shrink:0; overflow:hidden; }
 .timer-fill { height:100%; background:var(--accent); border-radius:2px; transition:width 1s linear, background 0.5s; }
 .timer-fill.warning { background:var(--accent2); }
-.timer-val { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:0.1em; color:rgba(240,235,255,0.75); text-align:center; flex-shrink:0; line-height:1; margin-bottom:2px; }
+.timer-val { font-family:'Impact','Arial Black',Arial,sans-serif; font-size:1.1rem; letter-spacing:0.1em; color:rgba(240,235,255,0.75); text-align:center; flex-shrink:0; line-height:1; margin-bottom:2px; }
 .timer-val.warning { color:var(--accent2); }
 .attempts-bar { display:flex; gap:6px; margin-bottom:6px; flex-shrink:0; }
 .attempt-dot { width:8px; height:8px; border-radius:50%; background:var(--accent2); box-shadow:0 0 8px var(--accent2); transition:all 0.3s; }
@@ -225,7 +224,7 @@ body.game-active::after {
 .word-display.medium { gap:5px; }
 .word-display.long   { gap:3px; }
 .letter-slot { display:flex; flex-direction:column; align-items:center; gap:3px; }
-.letter-char { font-family:'DM Serif Display',serif; font-size:1.7rem; line-height:1; min-width:26px; text-align:center; color:var(--text); transition:all 0.3s; transform-origin:bottom; }
+.letter-char { font-family:Georgia,'Times New Roman',serif; font-size:1.7rem; line-height:1; min-width:26px; text-align:center; color:var(--text); transition:all 0.3s; transform-origin:bottom; }
 .word-display.medium .letter-char { font-size:1.35rem; min-width:21px; }
 .word-display.long   .letter-char { font-size:1.05rem; min-width:16px; }
 .letter-char.revealed { animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); color:var(--accent); }
@@ -236,7 +235,7 @@ body.game-active::after {
 .word-display.medium .letter-line { width:21px; }
 .word-display.long   .letter-line { width:16px; }
 .letter-line.revealed { background:var(--accent); box-shadow:0 0 6px var(--accent); }
-.hint-row { font-family:'DM Mono',monospace; font-size:1.05rem; color:var(--accent3); letter-spacing:0.06em; margin-bottom:6px; text-align:center; min-height:20px; font-weight:500; flex-shrink:0; padding:0 4px; }
+.hint-row { font-family:'Courier New',Courier,monospace; font-size:1.05rem; color:var(--accent3); letter-spacing:0.06em; margin-bottom:6px; text-align:center; min-height:20px; font-weight:500; flex-shrink:0; padding:0 4px; }
 
 /* ── CLAVIER ── */
 .keyboard-wrap {
@@ -247,14 +246,14 @@ body.game-active::after {
 }
 .keyboard { width:100%; display:flex; flex-direction:column; gap:5px; }
 .key-row { display:flex; justify-content:center; gap:4px; }
-.key { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.18); color:var(--text); font-family:'DM Mono',monospace; font-size:1.2rem; font-weight:500; width:34px; height:40px; border-radius:6px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; -webkit-user-select:none; user-select:none; }
+.key { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.18); color:var(--text); font-family:'Courier New',Courier,monospace; font-size:1.2rem; font-weight:500; width:34px; height:40px; border-radius:6px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; -webkit-user-select:none; user-select:none; }
 .key::after { content:''; position:absolute; inset:0; background:var(--accent); opacity:0; transition:opacity 0.1s; }
 .key:active::after { opacity:0.15; }
 .key:not([disabled]):hover { border-color:rgba(232,255,71,0.4); color:var(--accent); transform:translateY(-1px); }
 .key.correct { background:rgba(232,255,71,0.12); border-color:var(--accent); color:var(--accent); cursor:default; }
 .key.wrong   { background:rgba(255,71,87,0.08);  border-color:rgba(255,71,87,0.3); color:var(--accent2); cursor:default; opacity:0.5; }
 .game-audio-bar { display:flex; gap:10px; justify-content:flex-end; width:100%; padding:6px 0 2px; flex-shrink:0; }
-.game-audio-bar button { background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35); color:#e8ff47; font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; padding:7px 12px; border-radius:100px; cursor:pointer; transition:all 0.2s; }
+.game-audio-bar button { background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.35); color:#e8ff47; font-family:'Courier New',Courier,monospace; font-size:0.65rem; letter-spacing:0.1em; padding:7px 12px; border-radius:100px; cursor:pointer; transition:all 0.2s; }
 .game-audio-bar button:active { transform:scale(0.95); }
 
 /* ── OVERLAY ── */
@@ -264,14 +263,14 @@ body.game-active::after {
 .overlay.hidden { opacity:0; pointer-events:none; }
 .overlay-emoji { font-size:4rem; animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1); }
 @keyframes bounceIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
-.overlay-title { font-family:'Bebas Neue',sans-serif; font-size:3rem; letter-spacing:0.1em; line-height:1; }
+.overlay-title { font-family:'Impact','Arial Black',Arial,sans-serif; font-size:3rem; letter-spacing:0.1em; line-height:1; }
 .overlay-title.win  { color:var(--accent);  text-shadow:0 0 40px rgba(232,255,71,0.5); }
 .overlay-title.lose { color:var(--accent2); text-shadow:0 0 40px rgba(255,71,87,0.5); }
-.overlay-word { font-family:'DM Serif Display',serif; font-style:italic; font-size:1.4rem; color:var(--muted); }
+.overlay-word { font-family:Georgia,'Times New Roman',serif; font-style:italic; font-size:1.4rem; color:var(--muted); }
 .overlay-word span { color:var(--text); font-style:normal; }
-.play-again-btn { background:var(--accent); color:var(--bg); border:none; padding:14px 40px; font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; box-shadow:0 0 30px rgba(232,255,71,0.3); }
+.play-again-btn { background:var(--accent); color:var(--bg); border:none; padding:14px 40px; font-family:'Impact','Arial Black',Arial,sans-serif; font-size:1.4rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; box-shadow:0 0 30px rgba(232,255,71,0.3); }
 .play-again-btn:hover { transform:translateY(-2px); box-shadow:0 0 50px rgba(232,255,71,0.5); }
-.menu-btn { background:transparent; border:1px solid var(--border); color:var(--muted); padding:10px 30px; font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; }
+.menu-btn { background:transparent; border:1px solid var(--border); color:var(--muted); padding:10px 30px; font-family:'Impact','Arial Black',Arial,sans-serif; font-size:1rem; letter-spacing:0.15em; cursor:pointer; border-radius:4px; transition:all 0.2s; }
 .menu-btn:hover { border-color:var(--muted); color:var(--text); }
 
 /* ── MULTI ── */
@@ -281,26 +280,26 @@ body.game-active::after {
   background:var(--bg); overflow-y:auto;
 }
 #multi-screen.visible, #multi-host-screen.visible, #multi-join-screen.visible, #multi-lobby-screen.visible { display:flex; }
-.multi-title { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.15em; color:var(--accent); margin-bottom:24px; }
-.multi-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:var(--text); font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:0.15em; padding:14px 32px; border-radius:8px; cursor:pointer; transition:all 0.2s; width:100%; max-width:300px; margin-bottom:12px; }
+.multi-title { font-family:'Impact','Arial Black',Arial,sans-serif; font-size:2rem; letter-spacing:0.15em; color:var(--accent); margin-bottom:24px; }
+.multi-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:var(--text); font-family:'Impact','Arial Black',Arial,sans-serif; font-size:1.2rem; letter-spacing:0.15em; padding:14px 32px; border-radius:8px; cursor:pointer; transition:all 0.2s; width:100%; max-width:300px; margin-bottom:12px; }
 .multi-btn:active { transform:scale(0.97); }
 .multi-btn.primary { background:rgba(232,255,71,0.15); border-color:var(--accent); color:var(--accent); }
-.multi-input { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15); color:var(--text); font-family:'DM Mono',monospace; font-size:1.3rem; letter-spacing:0.15em; text-align:center; width:100%; max-width:300px; padding:14px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; margin-bottom:12px; }
+.multi-input { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15); color:var(--text); font-family:'Courier New',Courier,monospace; font-size:1.3rem; letter-spacing:0.15em; text-align:center; width:100%; max-width:300px; padding:14px 20px; border-radius:8px; outline:none; transition:border-color 0.2s; margin-bottom:12px; }
 .multi-input:focus { border-color:var(--accent); }
-.multi-label { font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; width:100%; max-width:300px; text-align:left; }
-.multi-status { font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--accent3); letter-spacing:0.1em; text-align:center; margin-top:8px; min-height:20px; }
-.multi-code { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; letter-spacing:0.4em; color:var(--accent); text-shadow:0 0 30px rgba(232,255,71,0.4); margin:12px 0; }
-.multi-back { background:none; border:1px solid rgba(255,255,255,0.15); color:var(--muted); font-family:'DM Mono',monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; padding:8px 16px; border-radius:100px; cursor:pointer; margin-bottom:20px; align-self:flex-start; }
+.multi-label { font-family:'Courier New',Courier,monospace; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; width:100%; max-width:300px; text-align:left; }
+.multi-status { font-family:'Courier New',Courier,monospace; font-size:0.75rem; color:var(--accent3); letter-spacing:0.1em; text-align:center; margin-top:8px; min-height:20px; }
+.multi-code { font-family:'Impact','Arial Black',Arial,sans-serif; font-size:3.5rem; letter-spacing:0.4em; color:var(--accent); text-shadow:0 0 30px rgba(232,255,71,0.4); margin:12px 0; }
+.multi-back { background:none; border:1px solid rgba(255,255,255,0.15); color:var(--muted); font-family:'Courier New',Courier,monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; padding:8px 16px; border-radius:100px; cursor:pointer; margin-bottom:20px; align-self:flex-start; }
 .multi-toggle-row { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:300px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:12px 16px; border-radius:8px; margin-bottom:10px; cursor:pointer; }
-.multi-toggle-label { font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text); }
+.multi-toggle-label { font-family:'Courier New',Courier,monospace; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text); }
 .multi-player-row { display:flex; align-items:center; gap:10px; width:100%; max-width:300px; padding:10px 14px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; margin-bottom:8px; }
 .multi-player-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
-.multi-player-name { font-family:'DM Mono',monospace; font-size:0.85rem; flex:1; color:var(--text); }
-.multi-player-badge { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--accent3); letter-spacing:0.1em; }
+.multi-player-name { font-family:'Courier New',Courier,monospace; font-size:0.85rem; flex:1; color:var(--text); }
+.multi-player-badge { font-family:'Courier New',Courier,monospace; font-size:0.6rem; color:var(--accent3); letter-spacing:0.1em; }
 .multi-score-bar { width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 14px; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-.multi-score-name { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; }
-.multi-score-val { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--accent3); }
-.multi-score-goal { font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--muted); }
+.multi-score-name { font-family:'Courier New',Courier,monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; }
+.multi-score-val { font-family:'Impact','Arial Black',Arial,sans-serif; font-size:1.1rem; color:var(--accent3); }
+.multi-score-goal { font-family:'Courier New',Courier,monospace; font-size:0.6rem; color:var(--muted); }
 </style>
 </head>
 <body>
@@ -438,7 +437,7 @@ body.game-active::after {
       <span class="multi-toggle-label" id="multi-sync-label">Mode Libre</span>
       <div class="toggle-switch" id="multi-sync-switch"></div>
     </div>
-    <span id="multi-sync-desc" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.05em;line-height:1.4;">Chaque joueur finit son mot. On peut rattraper son retard.</span>
+    <span id="multi-sync-desc" style="font-family:'Courier New',Courier,monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.05em;line-height:1.4;">Chaque joueur finit son mot. On peut rattraper son retard.</span>
   </div>
   <div class="multi-label">Mots pour gagner (1-10)</div>
   <input class="multi-input" id="host-goal" type="number" min="1" max="10" value="5" style="font-size:1.3rem;">
@@ -1002,6 +1001,8 @@ function generateMultiCode() {
 }
 
 function showMultiMenu() {
+  // Couper la musique quand on entre en mode multi
+  if(window.player) { window.player.pause(); window.player.src=''; }
   document.getElementById('menu-screen').classList.add('hidden');
   showScreen_multi('multi-screen');
 }
@@ -1220,7 +1221,7 @@ function handleClientData_multi(data) {
     document.getElementById('multi-end-emoji').textContent = '👋';
     var t = document.getElementById('multi-end-title');
     t.textContent = 'PARTIE TERMINÉE'; t.className = 'overlay-title lose';
-    document.getElementById('multi-end-desc').innerHTML = 'L\'hôte a mis fin à la partie.<br><small style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.65rem;">Retour au menu dans 3 secondes...</small>';
+    document.getElementById('multi-end-desc').innerHTML = 'L\'hôte a mis fin à la partie.<br><small style="color:var(--muted);font-family:\'Courier New\',monospace;font-size:0.65rem;">Retour au menu dans 3 secondes...</small>';
     document.getElementById('multi-replay-btn').style.display = 'none';
     document.querySelector('#overlay-multi .menu-btn').style.display = 'none';
     document.getElementById('overlay-multi').classList.remove('hidden');
@@ -1429,7 +1430,7 @@ function endMultiGame(iWon, winnerName) {
     replayBtn.style.display = 'none';
     quitBtn.style.display   = 'none';
     document.getElementById('multi-end-desc').innerHTML +=
-      '<br><br><small style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.65rem;letter-spacing:0.08em;">En attente de la décision de l\'hôte...</small>';
+      '<br><br><small style="color:var(--muted);font-family:\'Courier New\',monospace;font-size:0.65rem;letter-spacing:0.08em;">En attente de la décision de l\'hôte...</small>';
   }
   document.getElementById('overlay-multi').classList.remove('hidden');
 }
@@ -1537,7 +1538,19 @@ document.addEventListener('keydown', function(e){ const l=e.key.toUpperCase(); i
 })();
 
 // ── Pause quand app minimisée ──
-  (function(){
+document.addEventListener('visibilitychange', function() {
+  if(document.hidden) {
+    if(window.player) window.player.pause();
+    if(window.motSfx) window.motSfx.pause();
+  } else {
+    if(window.soundOn && window.player && window.player.src) {
+      window.player.play().catch(function(){});
+    }
+    if(window.motSfx) window.motSfx.play().catch(function(){});
+  }
+});
+
+(function(){
   var hs = parseInt(localStorage.getItem('pendu-hs') || '0');
   var el = document.getElementById('hs-display');
   if (el) el.textContent = hs;
