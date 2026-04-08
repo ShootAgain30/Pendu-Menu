@@ -173,7 +173,7 @@ body::before {
   margin-top: 10px; position: relative; z-index: 1;
 }
 .menu-sound-btn:active { transform: scale(0.95); }
-.highscore-bar { position:relative; z-index:1; width:100%; text-align:right; font-family:'Courier New',Courier,monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(240,235,255,0.7); margin-bottom:22px; }
+.highscore-bar { position:absolute; top:16px; right:16px; z-index:2; font-family:'Courier New',Courier,monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(240,235,255,0.7); }
 .highscore-bar span { color:var(--accent); font-size:0.85rem; font-family:'Impact','Arial Black',Arial,sans-serif; letter-spacing:0.1em; }
 .back-menu-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); font-family:'Courier New',Courier,monospace; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; padding:6px 12px; border-radius:100px; cursor:pointer; transition:all 0.2s; }
 .back-menu-btn:active { transform:scale(0.95); background:rgba(255,255,255,0.1); }
@@ -1061,6 +1061,14 @@ function startHosting() {
     multiConn = conn;
     conn.on('open', function() {
       conn.on('data', function(data) { handleHostData_multi(data); });
+      conn.on('close', function() {
+        // Client s'est déconnecté pendant une partie — forfait
+        if(isMultiMode) {
+          endMultiGame(true, multiMyName);
+          document.getElementById('multi-end-desc').innerHTML =
+            multiOppName + ' a quitté — victoire par forfait !';
+        }
+      });
     });
   });
 
@@ -1150,7 +1158,24 @@ function joinMultiGame() {
       document.getElementById('join-status').textContent = 'Connecté ! En attente...';
     });
     conn.on('data', function(data) { handleClientData_multi(data); });
-    conn.on('error', function() {
+    conn.on('close', function() {
+      // Hôte s'est déconnecté pendant une partie — forfait
+      if(isMultiMode) {
+        stopTimer();
+        stopMotSfx();
+        isMultiMode = false;
+        document.getElementById('overlay').classList.add('hidden');
+        document.getElementById('multi-end-emoji').textContent = '🏆';
+        var t = document.getElementById('multi-end-title');
+        t.textContent = 'VICTOIRE !'; t.className = 'overlay-title win';
+        document.getElementById('multi-end-desc').innerHTML =
+          multiOppName + ' a quitté — victoire par forfait !<br><small style="color:var(--muted);font-family:\'Courier New\',monospace;font-size:0.65rem;">Retour au menu dans 3 secondes...</small>';
+        document.getElementById('multi-replay-btn').style.display = 'none';
+        document.querySelector('#overlay-multi .menu-btn').style.display = 'none';
+        document.getElementById('overlay-multi').classList.remove('hidden');
+        setTimeout(function(){ quitMultiMode(); }, 3000);
+      }
+    });
       document.getElementById('join-status').textContent = 'Erreur de connexion.';
     });
   });
@@ -1204,12 +1229,33 @@ function handleClientData_multi(data) {
     endMultiGame(data.iWon, data.winnerName);
   }
 
-  // L'hôte a gagné un mot (info score) — vérifier si objectif atteint
+  // L'hôte a gagné un mot (info score)
   if(data.type === 'host_word_won') {
     multiOppWins++;
     updateMultiScoreUI();
-    // Note : si l'hôte atteint l'objectif via host_word_won,
-    // il envoie game_end séparément — pas besoin de vérifier ici
+  }
+
+  // L'hôte a RATÉ son mot — le client gagne ce mot par défaut
+  if(data.type === 'client_wins_word') {
+    multiMyWins++;
+    updateMultiScoreUI();
+    if(multiMyWins >= multiGoal) {
+      // Client atteint l'objectif via forfait de l'hôte
+      endMultiGame(true, multiMyName);
+      return;
+    }
+    // Mode libre : client avance indépendamment
+    if(!multiSyncMode) {
+      multiClientWordIndex++;
+      if(multiClientWordIndex < multiWordList.length) {
+        setTimeout(function(){
+          document.getElementById('overlay').classList.add('hidden');
+          stopMotSfx();
+          startMultiGameLocal(multiWordList[multiClientWordIndex]);
+        }, 1200);
+      }
+    }
+    // Mode simultané : attendre new_word de l'hôte
   }
 
   // L'hôte quitte — redirection auto vers menu
@@ -1234,6 +1280,7 @@ function launchMultiGame() {
   multiDiff         = document.getElementById('host-diff').value;
   multiGoal         = Math.max(1, Math.min(10, parseInt(document.getElementById('host-goal').value) || 5));
   multiHintsEnabled = document.getElementById('multi-hint-switch').classList.contains('on');
+  multiSyncMode     = document.getElementById('multi-sync-switch').classList.contains('on');
 
   multiMyWins          = 0;
   multiOppWins         = 0;
@@ -1337,10 +1384,10 @@ function multiOnWordWon() {
 // ── MOT RATÉ ──
 function multiOnWordLost() {
   // Quand je rate, l'adversaire gagne ce mot par défaut
-  // Hôte rate → envoyer host_word_won au client (le client incrémente multiOppWins)
-  // Client rate → envoyer word_lost à l'hôte (l'hôte incrémente multiMyWins)
+  // Hôte rate  → client gagne ce mot → envoyer 'client_wins_word'
+  // Client rate → hôte gagne ce mot  → envoyer 'word_lost'
   if(multiIsHost) {
-    multiConn.send({type:'host_word_won'});
+    multiConn.send({type:'client_wins_word'});
   } else {
     multiConn.send({type:'word_lost'});
   }
