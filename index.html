@@ -991,8 +991,9 @@ var multiDiff = 'normal';
 var multiActive = false;
 var multiSyncMode = false;
 var isMultiMode = false;
-var multiWordList = [];   // liste des mots générée par l'hôte pour toute la partie
-var multiWordIndex = 0;   // index du mot courant
+var multiWordList = [];
+var multiHostWordIndex = 0;
+var multiClientWordIndex = 0;
 
 function generateMultiCode() {
   return Array.from({length:4}, function() {
@@ -1032,14 +1033,13 @@ function toggleMultiHints() {
   document.getElementById('multi-hint-switch').className = 'toggle-switch' + (multiHintsEnabled ? ' on' : '');
 }
 
-// ── HÔTE ──
+// ── HÔTE connexion ──
 function startHosting() {
   var name = document.getElementById('host-name').value.trim();
   if(!name) { document.getElementById('host-status').textContent = 'Entrez votre prénom'; return; }
   multiMyName = name;
   multiDiff = document.getElementById('host-diff').value;
-  multiGoal = parseInt(document.getElementById('host-goal').value) || 5;
-  multiGoal = Math.max(1, Math.min(10, multiGoal));
+  multiGoal = Math.max(1, Math.min(10, parseInt(document.getElementById('host-goal').value) || 5));
 
   document.getElementById('host-status').textContent = 'Connexion...';
   if(multiPeer) { multiPeer.destroy(); multiPeer = null; }
@@ -1068,30 +1068,65 @@ function startHosting() {
   });
 }
 
+// ── HÔTE reçoit messages du client ──
 function handleHostData_multi(data) {
-  // Joueur 2 rejoint le lobby
+
   if(data.type === 'join') {
     multiOppName = data.name;
     renderLobbyPlayers_multi([{name:multiMyName,isHost:true},{name:multiOppName,isHost:false}]);
     document.getElementById('lobby-status').textContent = multiOppName + ' a rejoint !';
     document.getElementById('lobby-start-btn').style.display = 'block';
-    multiConn.send({type:'joined', hostName:multiMyName, diff:multiDiff, hints:multiHintsEnabled, goal:multiGoal, syncMode:multiSyncMode});
+    multiConn.send({type:'joined', hostName:multiMyName});
   }
-  // Joueur 2 a gagné un mot
-  if(data.type === 'word_result') {
-    if(data.won) {
-      multiOppWins++;
-      updateMultiScoreUI();
-      if(multiOppWins >= multiGoal) {
-        // Joueur 2 gagne la partie — hôte affiche défaite et notifie victoire au client
-        multiConn.send({type:'game_end', iWon:true, winnerName:multiOppName});
-        endMultiGame(false, multiOppName);
+
+  // Client a TROUVÉ son mot
+  if(data.type === 'word_won') {
+    multiOppWins++;
+    updateMultiScoreUI();
+    if(multiOppWins >= multiGoal) {
+      multiConn.send({type:'game_end', iWon:true, winnerName:multiOppName});
+      endMultiGame(false, multiOppName);
+      return;
+    }
+    if(multiSyncMode) {
+      // Simultané : même mot suivant pour les deux
+      multiHostWordIndex++;
+      if(multiHostWordIndex < multiWordList.length) {
+        multiConn.send({type:'new_word', wordIndex: multiHostWordIndex});
+        setTimeout(function(){
+          document.getElementById('overlay').classList.add('hidden');
+          stopMotSfx();
+          startMultiGameLocal(multiWordList[multiHostWordIndex]);
+        }, 1200);
+      }
+    }
+    // Mode libre : client avance seul, hôte ne fait rien
+  }
+
+  // Client a RATÉ son mot — l'hôte gagne ce mot par défaut
+  if(data.type === 'word_lost') {
+    multiMyWins++;
+    updateMultiScoreUI();
+    if(multiMyWins >= multiGoal) {
+      multiConn.send({type:'game_end', iWon:false, winnerName:multiMyName});
+      endMultiGame(true, multiMyName);
+      return;
+    }
+    if(multiSyncMode) {
+      multiHostWordIndex++;
+      if(multiHostWordIndex < multiWordList.length) {
+        multiConn.send({type:'new_word', wordIndex: multiHostWordIndex});
+        setTimeout(function(){
+          document.getElementById('overlay').classList.add('hidden');
+          stopMotSfx();
+          startMultiGameLocal(multiWordList[multiHostWordIndex]);
+        }, 1200);
       }
     }
   }
 }
 
-// ── CLIENT ──
+// ── CLIENT connexion ──
 function joinMultiGame() {
   var code = document.getElementById('join-code').value.toUpperCase().trim();
   var name = document.getElementById('join-name').value.trim();
@@ -1124,54 +1159,56 @@ function joinMultiGame() {
   });
 }
 
+// ── CLIENT reçoit messages de l'hôte ──
 function handleClientData_multi(data) {
-  // Confirmation d'entrée dans le lobby
+
   if(data.type === 'joined') {
     multiOppName = data.hostName;
-    multiDiff = data.diff;
-    multiHintsEnabled = data.hints;
-    multiGoal = data.goal;
-    multiSyncMode = data.syncMode || false;
     renderLobbyPlayers_multi([{name:multiOppName,isHost:true},{name:multiMyName,isHost:false}]);
     document.getElementById('lobby-status').textContent = 'En attente du lancement...';
     document.getElementById('lobby-start-btn').style.display = 'none';
     showScreen_multi('multi-lobby-screen');
   }
-  // Nouveau mot envoyé par l'hôte
+
+  // Nouvelle partie — tout réinitialiser
   if(data.type === 'game_start') {
-    // Réinitialiser tout côté client pour la nouvelle partie
-    multiWordList = data.wordList;
-    multiWordIndex = 0;
-    multiMyWins = 0;
-    multiOppWins = 0;
-    motCount = 0;
-    multiGoal = data.goal;
-    multiDiff = data.diff;
+    multiWordList     = data.wordList;
+    multiGoal         = data.goal;
+    multiDiff         = data.diff;
     multiHintsEnabled = data.hints;
-    multiSyncMode = data.syncMode || false;
+    multiSyncMode     = data.syncMode;
+    multiMyWins       = 0;
+    multiOppWins      = 0;
+    multiClientWordIndex = 0;
+    motCount          = 0;
     hideMultiScreens();
     document.getElementById('overlay').classList.add('hidden');
     document.getElementById('overlay-multi').classList.add('hidden');
     stopMotSfx();
     startMultiGameLocal(multiWordList[0]);
   }
+
+  // Mot suivant imposé par l'hôte (mode simultané)
   if(data.type === 'new_word') {
-    multiWordIndex = data.wordIndex;
+    multiClientWordIndex = data.wordIndex;
     document.getElementById('overlay').classList.add('hidden');
     document.getElementById('overlay-multi').classList.add('hidden');
     stopMotSfx();
-    startMultiGameLocal(multiWordList[multiWordIndex]);
+    startMultiGameLocal(multiWordList[multiClientWordIndex]);
   }
-  // Fin de partie décidée par l'hôte
+
+  // Fin de partie
   if(data.type === 'game_end') {
     endMultiGame(data.iWon, data.winnerName);
   }
+
   // L'hôte a gagné un mot (info score)
   if(data.type === 'host_word_won') {
     multiOppWins++;
     updateMultiScoreUI();
   }
-  // L'hôte quitte — afficher message puis rediriger vers menu
+
+  // L'hôte quitte — redirection auto vers menu
   if(data.type === 'host_quit') {
     stopTimer();
     stopMotSfx();
@@ -1190,17 +1227,23 @@ function handleClientData_multi(data) {
 
 // ── LANCEMENT ──
 function launchMultiGame() {
-  multiMyWins = 0; multiOppWins = 0; motCount = 0;
-  multiWordIndex = 0;
-  multiActive = true;
+  multiDiff         = document.getElementById('host-diff').value;
+  multiGoal         = Math.max(1, Math.min(10, parseInt(document.getElementById('host-goal').value) || 5));
+  multiHintsEnabled = document.getElementById('multi-hint-switch').classList.contains('on');
 
-  // L'hôte génère toute la liste de mots d'un coup
+  multiMyWins          = 0;
+  multiOppWins         = 0;
+  multiHostWordIndex   = 0;
+  multiClientWordIndex = 0;
+  motCount             = 0;
+  multiActive          = true;
+
   var list = multiDiff === 'easy' ? WORDS_EASY : (multiDiff === 'normal' ? WORDS_NORMAL : WORDS_HARD);
   var shuffled = list.slice().sort(function(){ return Math.random()-0.5; });
-  multiWordList = shuffled.slice(0, Math.min(multiGoal * 3, shuffled.length));
+  multiWordList = shuffled.slice(0, Math.min(multiGoal * 4, shuffled.length));
 
-  // Envoyer la liste + réglages + reset des scores au client
-  multiConn.send({type:'game_start', wordList: multiWordList, goal: multiGoal, diff: multiDiff, hints: multiHintsEnabled, syncMode: multiSyncMode});
+  multiConn.send({type:'game_start', wordList:multiWordList, goal:multiGoal, diff:multiDiff, hints:multiHintsEnabled, syncMode:multiSyncMode});
+
   hideMultiScreens();
   document.getElementById('overlay').classList.add('hidden');
   document.getElementById('overlay-multi').classList.add('hidden');
@@ -1208,21 +1251,7 @@ function launchMultiGame() {
   startMultiGameLocal(multiWordList[0]);
 }
 
-// L'hôte passe au mot suivant dans la liste commune
-function sendNextWord() {
-  multiWordIndex++;
-  if(multiWordIndex >= multiWordList.length) {
-    // Plus de mots — ne devrait pas arriver car la liste est assez longue
-    return;
-  }
-  var entry = multiWordList[multiWordIndex];
-  multiConn.send({type:'new_word', wordIndex: multiWordIndex});
-  document.getElementById('overlay').classList.add('hidden');
-  document.getElementById('overlay-multi').classList.add('hidden');
-  stopMotSfx();
-  startMultiGameLocal(entry);
-}
-
+// ── DÉMARRER UN MOT ──
 function startMultiGameLocal(entry) {
   multiActive = true;
   stopTimer();
@@ -1246,51 +1275,69 @@ function startMultiGameLocal(entry) {
   startTimer();
 }
 
-// Mot trouvé en mode multi
+// ── MOT TROUVÉ ──
 function multiOnWordWon() {
   multiMyWins++;
   updateMultiScoreUI();
 
   if(multiMyWins >= multiGoal) {
-    // J'ai gagné la partie
     if(multiIsHost) {
-      // Hôte notifie le client qu'il a perdu
       multiConn.send({type:'game_end', iWon:false, winnerName:multiMyName});
       endMultiGame(true, multiMyName);
     } else {
-      // Client notifie l'hôte du résultat du mot
-      multiConn.send({type:'word_result', won:true});
-      // L'hôte enverra game_end — client affiche déjà victoire
+      multiConn.send({type:'word_won'});
       endMultiGame(true, multiMyName);
     }
     return;
   }
 
-  // Pas encore gagné — notifier et passer au mot suivant
   if(multiIsHost) {
     multiConn.send({type:'host_word_won'});
-    setTimeout(function(){ sendNextWord(); }, 1200);
-  } else {
-    multiConn.send({type:'word_result', won:true});
-    if(!multiSyncMode) {
-      // Mode Libre : le client avance indépendamment dans la liste
-      multiWordIndex++;
-      setTimeout(function(){ nextMultiWordClient(); }, 1200);
+    if(multiSyncMode) {
+      multiHostWordIndex++;
+      if(multiHostWordIndex < multiWordList.length) {
+        multiConn.send({type:'new_word', wordIndex: multiHostWordIndex});
+        setTimeout(function(){
+          document.getElementById('overlay').classList.add('hidden');
+          stopMotSfx();
+          startMultiGameLocal(multiWordList[multiHostWordIndex]);
+        }, 1200);
+      }
+    } else {
+      multiHostWordIndex++;
+      if(multiHostWordIndex < multiWordList.length) {
+        setTimeout(function(){
+          document.getElementById('overlay').classList.add('hidden');
+          stopMotSfx();
+          startMultiGameLocal(multiWordList[multiHostWordIndex]);
+        }, 1200);
+      }
     }
-    // Mode Simultané : client attend le new_word de l'hôte
+  } else {
+    multiConn.send({type:'word_won'});
+    if(multiSyncMode) {
+      // Attendre new_word de l'hôte
+    } else {
+      multiClientWordIndex++;
+      if(multiClientWordIndex < multiWordList.length) {
+        setTimeout(function(){
+          document.getElementById('overlay').classList.add('hidden');
+          stopMotSfx();
+          startMultiGameLocal(multiWordList[multiClientWordIndex]);
+        }, 1200);
+      }
+    }
   }
 }
 
-// Mot raté en mode multi (timer ou erreurs)
+// ── MOT RATÉ ──
 function multiOnWordLost() {
-  // Notifier l'adversaire
   if(multiIsHost) {
-    multiConn.send({type:'host_word_won'});
+    multiConn.send({type:'word_lost'});
   } else {
-    multiConn.send({type:'word_result', won:false});
+    multiConn.send({type:'word_lost'});
   }
 
-  // Afficher RATÉ
   stopMotSfx();
   if(window.soundOn && window.player) window.player.pause();
   var gif = document.getElementById('motmagique-gif');
@@ -1302,38 +1349,46 @@ function multiOnWordLost() {
   } catch(e2) {}
   document.getElementById('overlay').classList.remove('hidden');
   document.getElementById('overlay-emoji').textContent = '💀';
-  var t = document.getElementById('overlay-title');
-  t.textContent = 'RATÉ !'; t.className = 'overlay-title lose';
+  var t2 = document.getElementById('overlay-title');
+  t2.textContent = 'RATÉ !'; t2.className = 'overlay-title lose';
   document.getElementById('overlay-word').innerHTML = 'Le mot\u00A0était\u00A0: <span>' + W + '</span>';
 
-  // Mot suivant
   if(multiIsHost) {
-    setTimeout(function(){ sendNextWord(); }, 2500);
+    multiHostWordIndex++;
+    if(multiHostWordIndex < multiWordList.length) {
+      if(multiSyncMode) {
+        multiConn.send({type:'new_word', wordIndex: multiHostWordIndex});
+      }
+      setTimeout(function(){
+        document.getElementById('overlay').classList.add('hidden');
+        stopMotSfx();
+        startMultiGameLocal(multiWordList[multiHostWordIndex]);
+      }, 2500);
+    }
   } else {
     if(multiSyncMode) {
-      // Client attend le prochain mot de l'hôte
+      // Attendre new_word de l'hôte
     } else {
-      multiWordIndex++;
-      setTimeout(function(){ nextMultiWordClient(); }, 2500);
+      multiClientWordIndex++;
+      if(multiClientWordIndex < multiWordList.length) {
+        setTimeout(function(){
+          document.getElementById('overlay').classList.add('hidden');
+          stopMotSfx();
+          startMultiGameLocal(multiWordList[multiClientWordIndex]);
+        }, 2500);
+      }
     }
   }
 }
 
-// Mode Libre — le client avance dans sa liste
-function nextMultiWordClient() {
-  if(multiWordIndex >= multiWordList.length) return;
-  var entry = multiWordList[multiWordIndex];
-  document.getElementById('overlay').classList.add('hidden');
-  stopMotSfx();
-  startMultiGameLocal(entry);
-}
-
+// ── SCORE ──
 function updateMultiScoreUI() {
   document.getElementById('multi-score-me').textContent = multiMyWins;
   document.getElementById('multi-score-opp').textContent = multiOppWins;
   document.getElementById('multi-score-goal').textContent = ' / ' + multiGoal;
 }
 
+// ── FIN DE PARTIE ──
 function endMultiGame(iWon, winnerName) {
   stopTimer();
   stopMotSfx();
@@ -1348,55 +1403,53 @@ function endMultiGame(iWon, winnerName) {
     : (winnerName ? winnerName + ' a gagné — vous avez perdu !' : 'Partie terminée.');
 
   var replayBtn = document.getElementById('multi-replay-btn');
-  var quitBtn = document.querySelector('#overlay-multi .menu-btn');
+  var quitBtn   = document.querySelector('#overlay-multi .menu-btn');
 
   if(multiIsHost) {
-    // L'hôte décide : Rejouer (retour réglages) ou Quitter
     replayBtn.style.display = 'block';
-    replayBtn.textContent = '⚙ NOUVEAU RÉGLAGE';
-    quitBtn.style.display = 'block';
-    quitBtn.textContent = '✕ QUITTER LE MODE MULTI';
+    replayBtn.textContent   = '⚙ NOUVEAU RÉGLAGE';
+    quitBtn.style.display   = 'block';
+    quitBtn.textContent     = '✕ QUITTER LE MODE MULTI';
     quitBtn.onclick = function() { quitMultiMode(); };
     replayBtn.onclick = function() {
       document.getElementById('overlay-multi').classList.add('hidden');
       document.getElementById('multi-score-zone').style.display = 'none';
-      isMultiMode = false;
-      multiActive = false;
+      isMultiMode   = false;
+      multiActive   = false;
       document.body.classList.remove('game-active');
-      // Retourner à l'écran de réglages hôte
       showScreen_multi('multi-host-screen');
     };
   } else {
-    // Le client attend — écran figé sur victoire/défaite
     replayBtn.style.display = 'none';
-    quitBtn.style.display = 'none';
-    // Remettre les textes par défaut pour la prochaine fois
-    replayBtn.textContent = '⚙ NOUVEAU RÉGLAGE';
-    quitBtn.textContent = '✕ QUITTER LE MODE MULTI';
+    quitBtn.style.display   = 'none';
     document.getElementById('multi-end-desc').innerHTML +=
       '<br><br><small style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.65rem;letter-spacing:0.08em;">En attente de la décision de l\'hôte...</small>';
   }
   document.getElementById('overlay-multi').classList.remove('hidden');
 }
 
+// ── QUITTER ──
 function quitMultiMode() {
-  // L'hôte notifie le client qu'il quitte
   if(multiIsHost && multiConn) multiConn.send({type:'host_quit'});
+  stopTimer();
+  isMultiMode   = false;
+  multiActive   = false;
   document.getElementById('overlay-multi').classList.add('hidden');
   document.getElementById('multi-score-zone').style.display = 'none';
-  // Réinitialiser les boutons overlay-multi pour la prochaine fois
-  document.getElementById('multi-replay-btn').style.display = 'block';
-  document.querySelector('#overlay-multi .menu-btn').style.display = 'block';
-  document.querySelector('#overlay-multi .menu-btn').textContent = '✕ QUITTER LE MODE MULTI';
-  document.querySelector('#overlay-multi .menu-btn').onclick = function() { quitMultiMode(); };
-  isMultiMode = false;
-  multiActive = false;
+  var replayBtn = document.getElementById('multi-replay-btn');
+  var quitBtn   = document.querySelector('#overlay-multi .menu-btn');
+  replayBtn.style.display = 'block';
+  replayBtn.textContent   = '⚙ NOUVEAU RÉGLAGE';
+  quitBtn.style.display   = 'block';
+  quitBtn.textContent     = '✕ QUITTER LE MODE MULTI';
+  quitBtn.onclick = function() { quitMultiMode(); };
   if(multiPeer) { multiPeer.destroy(); multiPeer = null; }
   multiConn = null;
   document.body.classList.remove('game-active');
   goToMenu();
 }
 
+// ── LOBBY ──
 function renderLobbyPlayers_multi(players) {
   var container = document.getElementById('lobby-players-list');
   container.innerHTML = '';
