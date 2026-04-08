@@ -1123,6 +1123,7 @@ function handleHostData_multi(data) {
         }, 1200);
       }
     }
+    // Mode libre : l'hôte continue son propre mot, rien à faire
   }
 }
 
@@ -1202,10 +1203,12 @@ function handleClientData_multi(data) {
     endMultiGame(data.iWon, data.winnerName);
   }
 
-  // L'hôte a gagné un mot (info score)
+  // L'hôte a gagné un mot (info score) — vérifier si objectif atteint
   if(data.type === 'host_word_won') {
     multiOppWins++;
     updateMultiScoreUI();
+    // Note : si l'hôte atteint l'objectif via host_word_won,
+    // il envoie game_end séparément — pas besoin de vérifier ici
   }
 
   // L'hôte quitte — redirection auto vers menu
@@ -1280,18 +1283,14 @@ function multiOnWordWon() {
   multiMyWins++;
   updateMultiScoreUI();
 
-  if(multiMyWins >= multiGoal) {
-    if(multiIsHost) {
+  if(multiIsHost) {
+    if(multiMyWins >= multiGoal) {
+      // Hôte gagne la partie
       multiConn.send({type:'game_end', iWon:false, winnerName:multiMyName});
       endMultiGame(true, multiMyName);
-    } else {
-      multiConn.send({type:'word_won'});
-      endMultiGame(true, multiMyName);
+      return;
     }
-    return;
-  }
-
-  if(multiIsHost) {
+    // Pas encore l'objectif — informer le client + mot suivant
     multiConn.send({type:'host_word_won'});
     if(multiSyncMode) {
       multiHostWordIndex++;
@@ -1314,10 +1313,12 @@ function multiOnWordWon() {
       }
     }
   } else {
+    // Client — toujours notifier l'hôte avec le nouveau score
     multiConn.send({type:'word_won'});
-    if(multiSyncMode) {
-      // Attendre new_word de l'hôte
-    } else {
+    // L'hôte vérifie si l'objectif est atteint et envoie game_end si nécessaire
+    // Le client n'affiche PAS la victoire lui-même — il attend game_end de l'hôte
+    if(!multiSyncMode && multiMyWins < multiGoal) {
+      // Mode libre, pas encore gagné : avancer indépendamment
       multiClientWordIndex++;
       if(multiClientWordIndex < multiWordList.length) {
         setTimeout(function(){
@@ -1327,13 +1328,18 @@ function multiOnWordWon() {
         }, 1200);
       }
     }
+    // Si multiMyWins >= multiGoal : attendre game_end de l'hôte (écran neutre)
+    // Si multiSyncMode : attendre new_word de l'hôte
   }
 }
 
 // ── MOT RATÉ ──
 function multiOnWordLost() {
+  // Quand je rate, l'adversaire gagne ce mot par défaut
+  // Hôte rate → envoyer host_word_won au client (le client incrémente multiOppWins)
+  // Client rate → envoyer word_lost à l'hôte (l'hôte incrémente multiMyWins)
   if(multiIsHost) {
-    multiConn.send({type:'word_lost'});
+    multiConn.send({type:'host_word_won'});
   } else {
     multiConn.send({type:'word_lost'});
   }
