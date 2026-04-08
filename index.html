@@ -76,7 +76,7 @@ body::before {
 #menu-screen {
   position: fixed; inset: 0; z-index: 200;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 32px 24px;
+  padding: 20px 24px 24px;
   background: var(--bg);
   transition: opacity 0.5s, transform 0.5s;
 }
@@ -94,7 +94,8 @@ body::before {
     radial-gradient(ellipse 50% 60% at 80% 80%, rgba(72,219,251,0.06) 0%, transparent 60%);
 }
 .menu-logo {
-  font-family: 'Impact', 'Arial Black', Arial, sans-serif;
+  font-family: 'Impact', 'Arial Black', 'Arial Narrow', Arial, sans-serif;
+  font-weight: 900;
   font-size: clamp(3rem, 15vw, 5rem);
   letter-spacing: 0.18em; color: var(--accent);
   text-shadow: 0 0 60px rgba(232,255,71,0.35), 0 0 120px rgba(232,255,71,0.15);
@@ -173,7 +174,7 @@ body::before {
   margin-top: 10px; position: relative; z-index: 1;
 }
 .menu-sound-btn:active { transform: scale(0.95); }
-.highscore-bar { position:absolute; top:16px; right:16px; z-index:2; font-family:'Courier New',Courier,monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(240,235,255,0.7); }
+.highscore-bar { position:relative; z-index:2; width:100%; text-align:right; font-family:'Courier New',Courier,monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(240,235,255,0.7); margin-bottom:16px; }
 .highscore-bar span { color:var(--accent); font-size:0.85rem; font-family:'Impact','Arial Black',Arial,sans-serif; letter-spacing:0.1em; }
 .back-menu-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); font-family:'Courier New',Courier,monospace; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; padding:6px 12px; border-radius:100px; cursor:pointer; transition:all 0.2s; }
 .back-menu-btn:active { transform:scale(0.95); background:rgba(255,255,255,0.1); }
